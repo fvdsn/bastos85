@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <GL/glut.h>
 #include "draw.h"
-void draw_init(){
+void draw_init(void){
 	glClearColor(0.0,0.0,0.0,0.0);
 	glShadeModel(GL_FLAT);
-	//glMatrixMode(GL_PROJECTION);
-	//glLoadIdentity();
-	//glOrtho(0.0,1.0,0.0,1.0,-1.0,1.0);
+	/*glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0,1.0,0.0,1.0,-1.0,1.0);*/
 }
 void draw_reshape(int w, int h){
 	glViewport(0,0, (GLsizei)w, (GLsizei) h);
@@ -17,7 +17,7 @@ void draw_reshape(int w, int h){
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
-void draw_background(){
+void draw_background(void){
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 void particle_draw_square(particle_t*self){
@@ -33,6 +33,6 @@ void particle_draw_square(particle_t*self){
 		glVertex3f(ul.x,dr.y,0.0);
 	glEnd();
 }
-void draw_flush(){
+void draw_flush(void){
 	glutSwapBuffers();
 }

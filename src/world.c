@@ -9,7 +9,7 @@
 #include "keyboard.h"
 
 world_t *current_world = NULL;
-world_t *world_get(){
+world_t *world_get(void){
 	return current_world;
 }
 void 	world_set(world_t *w){
@@ -46,7 +46,7 @@ void world_add_particle(world_t *w,particle_t*p){
 	}
 	return;
 }
-particle_t *particle_iterator(particle_t**particles,int max_particles,int *id){
+static particle_t *particle_iterator(particle_t**particles,int max_particles,int *id){
 	particle_t*p;
 	if (id == NULL){
 		return NULL;
@@ -100,7 +100,7 @@ void world_setup_iterators(world_t*w){
 		}
 	}
 }
-void do_world(){
+void do_world(void){
 	world_t *w = world_get();
 	world_setup_iterators(w);
 	keyboard_frame();
@@ -108,7 +108,7 @@ void do_world(){
 	do_physics(w);
 	do_think(w);
 	do_graphics(w);
-	//do_sounds(w);
+	do_sounds(w);
 	do_garbage_collect(w);
 	wait_frame();
 }
@@ -169,7 +169,10 @@ void do_garbage_collect(world_t*w){
 		i++;
 	}
 }
-void keyboard_down_func(unsigned char key, int x, int y){
+/**
+ * Function called when a keyboard key is pressed
+ */
+static void keyboard_down_func(unsigned char key, int x, int y){
 	key_down(key);
 	switch(key){
 		case 'x':
@@ -184,13 +187,21 @@ void keyboard_down_func(unsigned char key, int x, int y){
 		case 'm':
 			set_time_scale(get_time_scale()*0.9);
 			break;
+		default:
+			break;
 	}
 	return;
 }
-void keyboard_up_func(unsigned char key, int x, int y){
+/**
+ * Function called when a keyboard key is released
+ */
+static void keyboard_up_func(unsigned char key, int x, int y){
 	key_up(key);
 }
-void particle_setup(particle_t *p2){
+/**
+ * Creates the particles, called at the world creation
+ */
+static void particle_setup(particle_t *p2){
 	particle_t *p;
 	p = particle_new(
 		box_new(	/*size and position*/
@@ -201,7 +212,7 @@ void particle_setup(particle_t *p2){
 		0
 	);
 	particle_set_color(p,1,0.5,0,1);
-	//particle_set_lifetime(p,5000);
+	/*particle_set_lifetime(p,5000);*/
 	p->draw = particle_draw_square;
 	p->move = particle_simple_move;
 	p->think = particle_simple_think;
@@ -244,11 +255,11 @@ int main(int argc, char**argv){
 	glutInitWindowPosition(250,250);
 	glutInitWindowSize(600,400);
 	glutCreateWindow("BASTOS 85");
-	//draw_init();
+	draw_init();
 	glutDisplayFunc(do_world);
 	glutIdleFunc(do_world);
 	glutReshapeFunc(draw_reshape);
-	//glutIgnoreKeyRepeat(1);
+	/*glutIgnoreKeyRepeat(1);*/
 	glutKeyboardFunc(keyboard_down_func);
 	glutKeyboardUpFunc(keyboard_up_func);
 	glutMainLoop();

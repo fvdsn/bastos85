@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -g
+FLAGS = -Wall -Werror -Wextra -pedantic -Wno-unused-parameter -g -Wdeclaration-after-statement -Wmissing-declarations -Wpointer-arith -Wstrict-prototypes -Wredundant-decls -Wcast-align -Wwrite-strings -Winline -Wformat-security -Wformat-nonliteral -Wswitch-enum -Wswitch-default -Winit-self
 LIBS = -lglut
 
 all : engine

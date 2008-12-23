@@ -18,5 +18,5 @@ int  key_pressed(unsigned char key);
 /**
  * Makes the keyboard status update for the current frame
  */
-void keyboard_frame();
+void keyboard_frame(void);
 #endif

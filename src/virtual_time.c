@@ -9,16 +9,19 @@ vmsec_t		delta_time = 1;
 struct timeval 	last_real_time;
 double time_scale = 1.0;
 
-vmsec_t get_time(){
+vmsec_t get_time(void){
 	return last_virtual_time;
 }
-vmsec_t get_dtime(){
+vmsec_t get_dtime(void){
 	return delta_time;
 }
-float 	get_dtime_sec(){
+float 	get_dtime_sec(void){
 	return delta_time / 1000.0;
 }
-vmsec_t get_real_time(){
+/**
+ * Returns the time of the outside world in msec
+ */
+static vmsec_t get_real_time(void){
 	struct timeval now;
 	gettimeofday(&now,NULL);
 	return now.tv_sec*1000+now.tv_usec/1000;
@@ -31,10 +34,10 @@ void init_time(){
 void set_time_scale(double scale){
 	time_scale = scale;
 }
-double get_time_scale(){
+double get_time_scale(void){
 	return time_scale;
 }
-void next_time(){
+void next_time(void){
 	struct timeval now;
 	gettimeofday(&now,NULL);
 	delta_time = (now.tv_sec*1000 + now.tv_usec/1000) -
@@ -46,7 +49,7 @@ void next_time(){
 void set_fps(int fps){
 	frame_interval = 1000/fps;
 }
-void wait_frame(){
+void wait_frame(void){
 	struct timespec w_time;
 	vmsec_t now = get_real_time();
 	while(last_frame_time + frame_interval > now){

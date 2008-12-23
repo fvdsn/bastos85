@@ -27,7 +27,7 @@ world_t *world_new(int max_particles);
  * Returns the current active world
  * @return : the current active world
  */
-world_t *world_get();
+world_t *world_get(void);
 /**
  * Sets the current active world
  * @param : the current active world
@@ -75,7 +75,7 @@ void world_add_particle(world_t *w, particle_t *p);
  * be used correctly
  */
 void world_setup_iterators(world_t*w);
-void do_world();
+void do_world(void);
 void do_physics(world_t*w);
 void do_think(world_t *w);
 void do_graphics(world_t*w);

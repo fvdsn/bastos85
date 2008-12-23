@@ -20,12 +20,14 @@ void key_up(unsigned char key){
 		case DOWNUP:
 			changes[key] = DOWNUP;
 			break;
+		default:
+			break;
 	}
 }
 int key_pressed(unsigned char key){
 	return pressed[key];
 }
-void keyboard_frame(){
+void keyboard_frame(void){
 	int k = KEY_COUNT;
 	while(k--){
 		switch(changes[k]){
@@ -40,6 +42,8 @@ void keyboard_frame(){
 			case DOWNUP:
 				pressed[k] = 1;
 				changes[k] = UP;
+				break;
+			default:
 				break;
 		}
 		
