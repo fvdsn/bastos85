@@ -38,7 +38,6 @@ void keyboard_frame(){
 				changes[k] = UNCHANGED;
 				break;
 			case DOWNUP:
-				printf("downup:%c\n",k);
 				pressed[k] = 1;
 				changes[k] = UP;
 				break;

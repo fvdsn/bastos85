@@ -84,6 +84,7 @@ void world_setup_iterators(world_t*w){
 	int i = 0;
 	w->thinking_particle_count = 0;
 	w->moving_particle_count = 0;
+	w->visible_particle_count = 0;
 	while((p=world_next_particle(w,&i))){
 		if(p->think || p->action){
 			w->thinking_particle[w->thinking_particle_count] = p;
@@ -107,7 +108,7 @@ void do_world(){
 	do_physics(w);
 	do_think(w);
 	do_graphics(w);
-	do_sounds(w);
+	//do_sounds(w);
 	do_garbage_collect(w);
 	wait_frame();
 }
@@ -127,6 +128,7 @@ void do_graphics(world_t*w){
 		w->visible_particle_count,
 		sizeof(particle_t*),
 		particle_z_sort);
+	
 	while((p = world_next_drawable(w,&i))){
 			p->draw(p);
 	}
@@ -204,7 +206,6 @@ void particle_setup(particle_t *p2){
 	p->move = particle_simple_move;
 	p->think = particle_simple_think;
 	p->action = particle_simple_action;
-	p->die = particle_setup;
 	p->a = vec_new(0,-10);
 	world_add_particle(world_get(),p);
 	
@@ -234,8 +235,8 @@ void particle_setup(particle_t *p2){
 }
 int main(int argc, char**argv){
 	init_time();
-	set_fps(100);
-	world_set(world_new(10000));
+	set_fps(60);
+	world_set(world_new(1000));
 	particle_setup(NULL);	
 	
 	glutInit(&argc,argv);
