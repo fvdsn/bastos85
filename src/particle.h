@@ -3,7 +3,7 @@
 #include "virtual_time.h"
 #include "vector.h"
 
-#define PARTICLE_PARAM_COUNT 16
+#define PARTICLE_PARAM_COUNT 8
 typedef struct particle_s{
 	box_t box;		/*position and size*/
 	float z;		/*depth*/
@@ -12,6 +12,7 @@ typedef struct particle_s{
 	float mass;		
 	vec_t air_friction;	
 	vec_t ground_friction;
+	int solid;		/*1 if the particles collides*/
 	int life;		/*dead if <= 0 */
 	vmsec_t die_time;	/*time when the particle will die*/
 	vmsec_t next_think;	/*time when the particle will think*/
@@ -20,6 +21,9 @@ typedef struct particle_s{
 	int flags;		
 	float color[4];		
 	float param[PARTICLE_PARAM_COUNT];
+	vmsec_t timer[PARTICLE_PARAM_COUNT];
+	vmsec_t timer_interval[PARTICLE_PARAM_COUNT];
+	vec_t vector[PARTICLE_PARAM_COUNT];
 	struct particle_s *parent;
 	void (*move)(struct particle_s *self);
 	void (*damage)(struct particle_s *self,  struct particle_s *source, int damage);
@@ -50,6 +54,18 @@ int  particle_is_dead(const particle_t*p);
  * Makes the particle dead
  */
 void particle_kill(particle_t*p);
+/**
+ * Makes the particle collide with other particles
+ * @param p : the modified particle
+ * @param trueorfalse : 1 if the particle collides, 0 if it doesn't
+ */
+void particle_set_solid(particle_t*p, int trueorfalse);
+/**
+ * Return true if the particle collides
+ * @param p : the particle
+ * @return : 1 if the particle collides, 0 if it doesn't
+ */
+int particle_is_solid(particle_t*p);
 /**
  * Sets a flags to true or false
  * @param p : the modified particle

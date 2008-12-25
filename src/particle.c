@@ -22,6 +22,12 @@ int particle_is_dead(const particle_t*p){
 void particle_kill(particle_t*p){
 	p->life = -1;
 }
+void particle_set_solid(particle_t*p, int trueorfalse){
+	p->solid = trueorfalse;
+}
+int particle_is_solid(particle_t*p){
+	return p->solid;
+}
 void particle_set_flag(particle_t*p, int id, int trueorfalse){
 	int flag = 1 << id;
 	if(trueorfalse){

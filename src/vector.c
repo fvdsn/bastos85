@@ -57,6 +57,35 @@ int box_intersect(box_t a, box_t b){
 	return 	(d.x < a.corner.x + b.corner.x) &&
 		(d.y < a.corner.y + b.corner.y);
 }
+vec_t box_intersect_vector(box_t a, box_t b){
+	vec_t d = vec_diff(a.pos, b.pos);
+	vec_t r = vec_new(0,0);
+	if (d.x >= 0){
+		r.x = (b.pos.x - b.corner.x) - (a.pos.x + a.corner.x);
+		if ( r.x > 0)
+			r.x = 0;
+	}else{
+		r.x =  (b.pos.x + b.corner.x) - (a.pos.x - a.corner.x);
+		if (r.x < 0)
+			r.x = 0;
+	}
+	if (d.y >= 0){
+		r.y = (b.pos.y - b.corner.y) - (a.pos.y + a.corner.y);
+		if ( r.y > 0)
+			r.y = 0;
+	}else{
+		r.y =  (b.pos.y + b.corner.y) - (a.pos.y - a.corner.y);
+		if (r.y < 0)
+			r.y = 0;
+	}
+	d = vec_abs(r);
+	if(d.x > d.y){
+		r.x = 0;
+	}else{
+		r.y = 0;
+	}
+	return r;
+}
 box_t box_floor(box_t a, int height){
 	vec_t *pos = &(a.pos);
 	vec_t *corner = &(a.corner);

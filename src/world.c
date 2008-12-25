@@ -66,6 +66,15 @@ static particle_t *particle_iterator(particle_t**particles,int max_particles,int
 particle_t *world_next_particle(world_t*w,int *id){
 	return particle_iterator(w->all_particle,w->max_particles,id);
 }
+particle_t *world_next_solid(world_t*w,box_t range,int *id){
+	particle_t *p = NULL;
+	while((p=world_next_particle(w,id))){
+		if(particle_is_solid(p)){
+			return p;
+		}
+	}
+	return NULL;
+}
 particle_t *world_next_drawable(world_t*w,int *id){
 	return particle_iterator(	w->visible_particle,
 					w->visible_particle_count,
@@ -115,8 +124,21 @@ void do_world(void){
 void do_physics(world_t *w){
 	int i = 0;
 	particle_t *p = NULL;
+	int j = 0;
+	particle_t *q = NULL;
+	box_t b = box_new(vec_new(0,0),vec_new(10,10),0);
+	vec_t d = vec_new(0,0);
 	while((p = world_next_moving(w,&i))){
+		j = 0;
 		p->move(p);
+		if(particle_is_solid(p)){
+			while((q = world_next_solid(w,b,&j))){
+				if(q != p && box_intersect(q->box,p->box)){
+					d = box_intersect_vector(p->box,q->box);
+					p->box.pos = vec_add(p->box.pos,d);
+				}
+			}
+		}
 	}
 	/*TODO collisions and damage*/
 }
@@ -218,6 +240,7 @@ static void particle_setup(particle_t *p2){
 	p->think = particle_simple_think;
 	p->action = particle_simple_action;
 	p->a = vec_new(0,-10);
+	particle_set_solid(p,1);
 	world_add_particle(world_get(),p);
 	
 	p = particle_new(
@@ -230,6 +253,7 @@ static void particle_setup(particle_t *p2){
 	);
 	particle_set_color(p,1,1,1,1);
 	p->draw = particle_draw_square;
+	particle_set_solid(p,1);
 	world_add_particle(world_get(),p);
 
 	p = particle_new(

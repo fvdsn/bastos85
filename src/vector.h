@@ -98,6 +98,16 @@ vec_t box_downright(box_t a);
  */
 int   box_intersect(box_t a, box_t b);
 /**
+ * Returns the minimum movement a box must do so that
+ * it doesn't intersect another box.
+ * @param a : the box that must move
+ * @param b : the static box
+ * @return a vector indicating how much a must move so that
+ * it doesn't intersect b. if they do not intersect, 
+ * it will return (0,0)
+ */
+vec_t box_intersect_vector(box_t a, box_t b);
+/**
  * Prevents the box from going below a certain height
  * @param a : the box
  * @param height : the minimum height :

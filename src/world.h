@@ -62,7 +62,7 @@ particle_t *world_next_thinking(world_t*w, int *id);
  * @param range : a box representing the zone where we want to check for
  * collisions
  */
-particle_t *world_next_collidable(world_t*w,box_t*range, int *id);
+particle_t *world_next_solid(world_t*w,box_t range, int *id);
 /**
  * Adds a particle to the world. It will be fully effective only on the next
  * frame. Adding a particle multiple time is a very bad idea. 
