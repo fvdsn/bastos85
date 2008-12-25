@@ -75,12 +75,47 @@ void world_add_particle(world_t *w, particle_t *p);
  * be used correctly
  */
 void world_setup_iterators(world_t*w);
+/**
+ * Main loop of the engine.
+ * It loops infinitely performing for each frame :
+ *  ->setting up the iterators
+ *  -> catching keyboards events
+ *  -> increasing virtual time
+ *  -> performing the physics
+ *  -> allowing particles to think
+ *  -> draws the particles
+ *  -> emit sound
+ *  -> collect dead particles
+ * In that order.
+ */
 void do_world(void);
+/**
+ * Perform physics : allow particles to move by calling their move functions.
+ * Detect collisions, call the collide function of the particle then prevent
+ * possible intersections. Computes damage and call the damage function of
+ * the particles
+ */
 void do_physics(world_t*w);
+/**
+ * Allow the particle to think, performs all the timers, then kill the 
+ * particles if necessary
+ */
 void do_think(world_t *w);
+/**
+ * Draws the background and the particles
+ */
 void do_graphics(world_t*w);
+/**
+ * Plays the music and the sounds 
+ */
 void do_sounds(world_t*w);
+/**
+ * Free dead particles and other stuff
+ */
 void do_garbage_collect(world_t*w);
+/**
+ * Displays the program main window
+ */
 void main_window(int argc, char**argv, int sizex, int sizey);
 
 #endif
