@@ -270,7 +270,7 @@ static void particle_setup(particle_t *p2){
 }
 int main(int argc, char**argv){
 	init_time();
-	set_fps(60);
+	set_fps(90);
 	world_set(world_new(1000));
 	particle_setup(NULL);	
 	
