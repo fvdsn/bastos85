@@ -95,7 +95,7 @@ void world_setup_iterators(world_t*w){
 	w->moving_particle_count = 0;
 	w->visible_particle_count = 0;
 	while((p=world_next_particle(w,&i))){
-		if(p->think || p->action){
+		if(p->think || p->action || p->die_time){
 			w->thinking_particle[w->thinking_particle_count] = p;
 			w->thinking_particle_count++;
 		}
@@ -220,59 +220,11 @@ static void keyboard_down_func(unsigned char key, int x, int y){
 static void keyboard_up_func(unsigned char key, int x, int y){
 	key_up(key);
 }
-/**
- * Creates the particles, called at the world creation
- */
-static void particle_setup(particle_t *p2){
-	particle_t *p;
-	p = particle_new(
-		box_new(	/*size and position*/
-			vec_new(0,0),	/*position of center*/
-			vec_new(10,15),	/*size*/
-			0		/*angle*/
-		),
-		0
-	);
-	particle_set_color(p,1,0.5,0,1);
-	/*particle_set_lifetime(p,5000);*/
-	p->draw = particle_draw_square;
-	p->move = particle_simple_move;
-	p->think = particle_simple_think;
-	p->action = particle_simple_action;
-	p->a = vec_new(0,-10);
-	particle_set_solid(p,1);
-	world_add_particle(world_get(),p);
-	
-	p = particle_new(
-		box_new(
-			vec_new(100,0),
-			vec_new(50,50),
-			0
-		),
-		1
-	);
-	particle_set_color(p,1,1,1,1);
-	p->draw = particle_draw_square;
-	particle_set_solid(p,1);
-	world_add_particle(world_get(),p);
 
-	p = particle_new(
-		box_new(
-			vec_new(0,100),
-			vec_new(100,50),
-			0
-		),
-		-1
-	);
-	particle_set_color(p,0.5,0.5,0.5,1);
-	p->draw = particle_draw_square;
-	world_add_particle(world_get(),p);
-}
-int main(int argc, char**argv){
+int world_main_loop(int argc, char **argv, world_t *w){
 	init_time();
 	set_fps(90);
-	world_set(world_new(1000));
-	particle_setup(NULL);	
+	world_set(w);
 	
 	glutInit(&argc,argv);
 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB);

@@ -2,11 +2,17 @@ CC = gcc
 FLAGS = -Wall -Werror -Wextra -pedantic -Wno-unused-parameter -g -Wdeclaration-after-statement -Wmissing-declarations -Wpointer-arith -Wstrict-prototypes -Wredundant-decls -Wcast-align -Wwrite-strings -Winline -Wformat-security -Wformat-nonliteral -Wswitch-enum -Wswitch-default -Winit-self
 LIBS = -lglut
 
-all : engine
+all : game
 
-engine: world.o
-	${CC} ${FLAGS} ${LIBS} -o engine world.o particle.o draw.o vector.o virtual_time.o keyboard.o
+game: game.o
+	${CC} ${FLAGS} ${LIBS} -o game world.o particle.o draw.o vector.o virtual_time.o keyboard.o factory.o game.o
 
+game.o:	src/game.c world.o particle.o vector.o draw.o factory.o
+	${CC} ${FLAGS} -c src/game.c
+
+factory.o: src/factory.c src/factory.h particle.o vector.o world.o
+	${CC} ${FLAGS} -c src/factory.c
+	
 world.o: src/world.c src/world.h particle.o draw.o keyboard.o
 	${CC} ${FLAGS} -c src/world.c 
 

@@ -117,6 +117,17 @@ void do_garbage_collect(world_t*w);
  * Displays the program main window
  */
 void main_window(int argc, char**argv, int sizex, int sizey);
+/**
+ * Displays the world in a window. This is the function you want
+ * to call in your main program after you have set up all the 
+ * worlds and particles, its return value is what your main 
+ * program should return. 
+ * @param argc : the number of arguments provided by the command line at the
+ * program launch.
+ * @param argv : an array of strings containing each argument value
+ * @param w : the world that will initially be displayed, cannot be NULL
+ */
+int world_main_loop(int argc, char**argv, world_t *w);
 
 #endif
 
