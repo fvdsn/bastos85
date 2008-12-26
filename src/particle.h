@@ -18,7 +18,8 @@ typedef struct particle_s{
 	vmsec_t next_think;	/*time when the particle will think*/
 	vmsec_t think_interval; /*time between think*/
 	int think_count;	/*number of time the particle has thought*/
-	int flags;		
+	int flags;	
+	int camera;	/*1 if the camera follows this particle*/
 	float color[4];		
 	float param[PARTICLE_PARAM_COUNT];
 	vmsec_t timer[PARTICLE_PARAM_COUNT];
@@ -66,6 +67,18 @@ void particle_set_solid(particle_t*p, int trueorfalse);
  * @return : 1 if the particle collides, 0 if it doesn't
  */
 int particle_is_solid(particle_t*p);
+/**
+ * Makes the camera follow this particle
+ * @param p : the followed particle
+ * @param trueorfalse : if 1 the camera will follow the particle, if 0 it won't
+ */
+void particle_set_camera(particle_t *p, int trueorfalse);
+/**
+ * Checks if the particle is followed by the camera
+ * @param p : the particle
+ * @return : 1 if the particle is followed by the camera, 0 if it isn't.
+ */
+int particle_is_camera(particle_t *p);
 /**
  * Sets a flags to true or false
  * @param p : the modified particle

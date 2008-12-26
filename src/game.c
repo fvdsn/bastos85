@@ -40,6 +40,7 @@ int main(int argc, char**argv){
 	p->vector[MISSILE] = vec_new(100,0);
 	particle_set_color(p,0.7,0.7,0,1);
 	particle_set_solid(p,1);
+	particle_set_camera(p,1);
 	factory_register(p,P_SHIP);
 
 	p = particle_new(box_new(vec_new(0,0),vec_new(50,50),0),1);

@@ -60,6 +60,12 @@ void particle_set_color(particle_t*p,float r, float g, float b, float a){
 void particle_set_lifetime(particle_t*p, vmsec_t time){
 	p->die_time = get_time() + time;
 }
+void particle_set_camera(particle_t *p, int trueorfalse){
+	p->camera = trueorfalse;
+}
+int particle_is_camera(particle_t *p){
+	return p->camera;
+}
 int particle_z_sort(const void *a, const void *b){
 	particle_t *pa = *(particle_t**)a;
 	particle_t *pb = *(particle_t**)b;
