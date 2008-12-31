@@ -3,7 +3,7 @@
 /** 
  * A type used to store miliseconds
  */
-typedef long vmsec_t;	
+typedef unsigned long vmsec_t;	
 /**
  * Returns the current time in msec
  * @return the current time in msec

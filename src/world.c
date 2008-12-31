@@ -111,6 +111,7 @@ void world_setup_iterators(world_t*w){
 }
 void do_world(void){
 	world_t *w = world_get();
+	/*printf("coucou3\n");	*/
 	world_setup_iterators(w);
 	keyboard_frame();
 	next_time();
@@ -228,7 +229,7 @@ int world_main_loop(int argc, char **argv, world_t *w){
 	init_time();
 	set_fps(90);
 	world_set(w);
-	
+	/*printf("coucou2\n");	*/
 	glutInit(&argc,argv);
 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB);
 	glutInitWindowPosition(250,250);

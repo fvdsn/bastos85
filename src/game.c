@@ -1,4 +1,5 @@
 #include <stdlib.h> 
+#include <stdio.h> 
 #include "world.h"
 #include "vector.h"
 #include "particle.h"
@@ -31,6 +32,7 @@ int main(int argc, char**argv){
 	world_t*w = world_new(1000);
 	particle_t *p;
 	world_set(w);
+	printf("coucou\n");
 	/* Player ship*/
 	p = particle_new(box_new(vec_new(0,0),vec_new(8,16),0),0);
 	p->draw = particle_draw_square;	
@@ -75,5 +77,6 @@ int main(int argc, char**argv){
 	
 	/*running the world*/
 
+	printf("coucou\n");
 	return world_main_loop(argc,argv,w);
 }
