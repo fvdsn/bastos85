@@ -3,14 +3,18 @@
 #include <stdio.h>
 #include "virtual_time.h"
 
-#define SECONDS_IN_A_YEAR 31536000
-
-vmsec_t 	last_virtual_time;
-vmsec_t		frame_interval = 100;
-vmsec_t		last_frame_time = 0;
-vmsec_t		delta_time = 1;
-struct timeval 	last_real_time;
-double time_scale = 1.0;
+/** time in msec since unix epoch of current frame*/
+static vmsec_t 	last_real_time;
+/** time in game msec of current frame, it can be slowed down or accelerated */
+static vmsec_t 	last_virtual_time;
+/** delay between rendered frames, is updated when fps is set */
+static vmsec_t	frame_interval = 100;
+/** time in msec of the beginning of the frame used to maintain the fps */
+static vmsec_t	last_frame_time = 0;
+/** time of previous frame */
+static vmsec_t	delta_time = 1;
+/** speed at witch virtual time is updated. should be >= 0 */
+static double 	time_scale = 1.0;
 
 vmsec_t get_time(void){
 	return last_virtual_time;
@@ -26,21 +30,13 @@ float 	get_dtime_sec(void){
  */
 static vmsec_t get_real_time(void){
 	struct timeval now;
-	unsigned long time = 0;
 	gettimeofday(&now,NULL);
-	now.tv_sec = now.tv_sec % SECONDS_IN_A_YEAR;
-	time = now.tv_sec*1000+now.tv_usec/1000;
-	/*	printf("uncool\n");
-		printf("seconds: %d\n",(int)now.tv_sec);
-		printf("seconds: %d\n",(int)(now.tv_sec*1000));
-		printf("nanoseconds: %d\n",(int)now.tv_usec);
-	*/
-	return time;
+	/* Damned crazy integer arithmetic, it overflowed around 31dec 2008 ^^ */
+	return (long)(now.tv_sec)*1000L + (long)(now.tv_usec)/1000L;
 }
 void init_time(){
-	gettimeofday(&last_real_time,NULL);
-	last_virtual_time = last_real_time.tv_sec*1000 
-				+ last_real_time.tv_usec/ 1000;
+	last_real_time = get_real_time();
+	last_virtual_time = last_real_time;
 }
 void set_time_scale(double scale){
 	time_scale = scale;
@@ -49,10 +45,8 @@ double get_time_scale(void){
 	return time_scale;
 }
 void next_time(void){
-	struct timeval now;
-	gettimeofday(&now,NULL);
-	delta_time = (now.tv_sec*1000 + now.tv_usec/1000) -
-				(last_real_time.tv_sec*1000 + last_real_time.tv_usec/1000);
+	vmsec_t now = get_real_time();
+	delta_time = now - last_real_time;
 	delta_time *= time_scale;
 	last_real_time = now;
 	last_virtual_time += delta_time;
@@ -65,15 +59,11 @@ void wait_frame(void){
 	vmsec_t now = get_real_time();
 	while(last_frame_time + frame_interval > now){
 		vmsec_t wait_time = last_frame_time + frame_interval - now;
-		/*printf("waiting %d\n",(int)wait_time);
-		printf("real_time:%d\n",(int)get_real_time());
-		printf("frame_interval :%d\n",(int)frame_interval);*/
 		w_time.tv_sec = wait_time / 1000;
 		w_time.tv_nsec = (wait_time % 1000) * 1000000;
 		nanosleep(&w_time,NULL);
 		now = get_real_time();
 	}
-	/*printf("test\n");*/
 	last_frame_time = now;
 }
 

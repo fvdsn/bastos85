@@ -32,7 +32,7 @@ virtual_time.o: src/virtual_time.c src/virtual_time.h
 	${CC} ${FLAGS} -c src/virtual_time.c
 
 clean:
-	-rm *.o engine 
+	-rm *.o engine game 
 doc:	Doxygen.config src/*.h src/*.c
 	doxygen Doxygen.config
 
