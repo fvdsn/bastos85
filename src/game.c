@@ -44,7 +44,6 @@ int main(int argc, char**argv){
 	world_t*w = world_new(50000);
 	particle_t *p;
 	world_set(w);
-	printf("coucou\n");
 	background_set_color(0.05,0.05,0.05,1);
 	/* Player ship*/
 	p = particle_new(box_new(vec_new(0,0),vec_new(8,16),0),0);
@@ -54,7 +53,7 @@ int main(int argc, char**argv){
 	p->action = action;
 	p->vector[MISSILE] = vec_new(100,0);
 	particle_set_color(p,0.7,0.7,0,0.5);
-	particle_set_solid(p,1);
+	particle_set_collides(p,1);
 	particle_set_camera(p,1);
 	factory_register(p,P_SHIP);
 
@@ -77,6 +76,7 @@ int main(int argc, char**argv){
 	particle_set_alt_color(p,0.1,0.6,1,0.7);
 	p->draw = particle_draw_square;
 	p->move = particle_simple_move;
+	particle_set_collides(p,1);
 	/*p->think = particle_simple_think;*/
 	p->die = missile_die;
 	factory_register(p,P_MISSILE);
@@ -93,8 +93,12 @@ int main(int argc, char**argv){
 	factory_create(-150,-150,P_BG);
 	factory_resized(-300,-150,300,-100,P_BG);
 	
+	factory_resized(-400,-200,400,-150,P_WALL);
+	factory_resized(-400,200,400,150,P_WALL);
+	factory_resized(400,50,350,-150,P_WALL);
+	factory_resized(-400,150,-350,-50,P_WALL);
+
 	/*running the world*/
 
-	printf("coucou\n");
 	return world_main_loop(argc,argv,w);
 }

@@ -21,6 +21,7 @@ world_t *world_new(int max_particles){
 	w->thinking_particle_count = 0;
 	w->moving_particle_count   = 0;
 	w->visible_particle_count  = 0;
+	w->solid_particle_count = 0;
 	
 	w->all_particle = (particle_t**)malloc(max_particles*sizeof(particle_t*));
 	memset(w->all_particle,0,max_particles*sizeof(particle_t*));
@@ -33,6 +34,9 @@ world_t *world_new(int max_particles){
 	
 	w->visible_particle = (particle_t**)malloc(max_particles*sizeof(particle_t*));
 	memset(w->visible_particle,0,max_particles*sizeof(particle_t*));
+	
+	w->solid_particle = (particle_t**)malloc(max_particles*sizeof(particle_t*));
+	memset(w->solid_particle,0,max_particles*sizeof(particle_t*));
 	return w;
 }
 void world_add_particle(world_t *w,particle_t*p){
@@ -67,13 +71,7 @@ particle_t *world_next_particle(world_t*w,int *id){
 	return particle_iterator(w->all_particle,w->max_particles,id);
 }
 particle_t *world_next_solid(world_t*w,box_t range,int *id){
-	particle_t *p = NULL;
-	while((p=world_next_particle(w,id))){
-		if(particle_is_solid(p)){
-			return p;
-		}
-	}
-	return NULL;
+	return particle_iterator(w->solid_particle,w->solid_particle_count,id);
 }
 particle_t *world_next_drawable(world_t*w,int *id){
 	return particle_iterator(	w->visible_particle,
@@ -94,6 +92,7 @@ void world_setup_iterators(world_t*w){
 	w->thinking_particle_count = 0;
 	w->moving_particle_count = 0;
 	w->visible_particle_count = 0;
+	w->solid_particle_count = 0;
 	while((p=world_next_particle(w,&i))){
 		if(p->think || p->action || p->die_time || particle_is_camera(p)){
 			w->thinking_particle[w->thinking_particle_count] = p;
@@ -106,6 +105,10 @@ void world_setup_iterators(world_t*w){
 		if(p->draw){
 			w->visible_particle[w->visible_particle_count] = p;
 			w->visible_particle_count++;
+		}
+		if(particle_is_solid(p)){
+			w->solid_particle[w->solid_particle_count] = p;
+			w->solid_particle_count++;
 		}
 	}
 }
@@ -131,7 +134,7 @@ void do_physics(world_t *w){
 	while((p = world_next_moving(w,&i))){
 		j = 0;
 		p->move(p);
-		if(particle_is_solid(p)){
+		if(particle_collides(p)){
 			while((q = world_next_solid(w,b,&j))){
 				if(q != p && box_intersect(q->box,p->box)){
 					d = box_intersect_vector(p->box,q->box);

@@ -15,6 +15,8 @@ typedef struct world_s{
 	particle_t **moving_particle;
 	int visible_particle_count;
 	particle_t **visible_particle;
+	int solid_particle_count;
+	particle_t **solid_particle;
 }world_t;
 /**
  * Creates a new empty world
@@ -57,7 +59,7 @@ particle_t *world_next_moving(world_t*w, int *id);
  */
 particle_t *world_next_thinking(world_t*w, int *id);
 /**
- * Iterates over all collidable particles within range 
+ * Iterates over all solid particles within range 
  * (see world_next_particle for usage)
  * @param range : a box representing the zone where we want to check for
  * collisions

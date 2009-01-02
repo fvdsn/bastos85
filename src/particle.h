@@ -12,7 +12,8 @@ typedef struct particle_s{
 	float mass;		
 	vec_t air_friction;	
 	vec_t ground_friction;
-	int solid;		/*1 if the particles collides*/
+	int solid;		/*1 if the recieves collisions*/
+	int collides;		/*1 if the particles makes collisions*/
 	int life;		/*dead if <= 0 */
 	vmsec_t die_time;	/*time when the particle will die*/
 	vmsec_t next_think;	/*time when the particle will think*/
@@ -57,17 +58,33 @@ int  particle_is_dead(const particle_t*p);
  */
 void particle_kill(particle_t*p);
 /**
- * Makes the particle collide with other particles
+ * The particle will modify colliding particles trajectory.
  * @param p : the modified particle
  * @param trueorfalse : 1 if the particle collides, 0 if it doesn't
  */
 void particle_set_solid(particle_t*p, int trueorfalse);
 /**
- * Return true if the particle collides
+ * Return true if the particle recieves collisions (like wall)
  * @param p : the particle
- * @return : 1 if the particle collides, 0 if it doesn't
+ * @return : 1 if the particle recieves collisions, 0 if it doesn't
  */
 int particle_is_solid(particle_t*p);
+/**
+ * Makes the particle modify its trajectory when colliding with a solid object
+ * @param p : the modified particle
+ * @param trueorfalse : the particle will collide if trueorfalse is 1 it will
+ * not if it is 0.
+ */
+void particle_set_collides(particle_t*p, int trueorfalse);
+/**
+ * Return true if the particles collides 
+ * smoke collides on wall but is not solid
+ * collides should only be set if the particle movement will be
+ * influenced by the collision. 
+ * @param p : the particle
+ * @return : 1 if the particle collides 0 if it doesn't
+ */
+int particle_collides(particle_t*p);
 /**
  * Makes the camera follow this particle
  * @param p : the followed particle

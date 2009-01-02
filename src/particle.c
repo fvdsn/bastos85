@@ -28,6 +28,12 @@ void particle_set_solid(particle_t*p, int trueorfalse){
 int particle_is_solid(particle_t*p){
 	return p->solid;
 }
+void particle_set_collides(particle_t*p, int trueorfalse){
+	p->collides = trueorfalse;
+}
+int particle_collides(particle_t*p){
+	return p->collides;
+}
 void particle_set_flag(particle_t*p, int id, int trueorfalse){
 	int flag = 1 << id;
 	if(trueorfalse){
