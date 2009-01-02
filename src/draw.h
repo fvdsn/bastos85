@@ -22,6 +22,17 @@ void draw_background(void);
  */
 void particle_draw_square(particle_t *self);
 /**
+ * A simple draw method for particles : It draws
+ * them as a plain oval disc with the same color, 
+ * position and size as the particle
+ */
+void particle_draw_disc(particle_t *self);
+/**
+ * A simple draw method for particles that draws a
+ * pixel of the particle's color at its center.
+ */
+void particle_draw_point(particle_t *self);
+/**
  * Pops all the matrixes after the frame is
  * drawn
  */

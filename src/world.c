@@ -111,7 +111,6 @@ void world_setup_iterators(world_t*w){
 }
 void do_world(void){
 	world_t *w = world_get();
-	/*printf("coucou3\n");	*/
 	world_setup_iterators(w);
 	keyboard_frame();
 	next_time();

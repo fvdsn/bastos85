@@ -57,6 +57,12 @@ void particle_set_color(particle_t*p,float r, float g, float b, float a){
 	p->color[2] = b;
 	p->color[3] = a;
 }
+void particle_set_alt_color(particle_t*p,float r, float g, float b, float a){
+	p->altcolor[0] = r;
+	p->altcolor[1] = g;
+	p->altcolor[2] = b;
+	p->altcolor[3] = a;
+}
 void particle_set_lifetime(particle_t*p, vmsec_t time){
 	p->die_time = get_time() + time;
 }

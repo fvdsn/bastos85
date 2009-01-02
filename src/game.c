@@ -14,25 +14,38 @@
 #define P_MISSILE 4
 
 static void action(particle_t*p){
-	particle_t * missile = NULL;
-	particle_simple_action(p);
 #define MISSILE 0
+	particle_t * missile = NULL;
+	vec_t spread = vec_new(random()%100 - 50,random()%100 -50);
+	particle_simple_action(p);
 	if(!vec_zero(p->v)){
 		p->vector[MISSILE] = p->v;
 	}
 	if(key_pressed(' ') && get_time() > p->timer[MISSILE]){
-		p->timer[MISSILE] = get_time() + 50;
+		p->timer[MISSILE] = get_time() + 1;
 		missile = factory_create_v(p->box.pos,P_MISSILE);
 		missile->v = vec_add(p->vector[MISSILE],p->v);
-		missile->die_time = get_time() + 1000;
+		missile->v = vec_add(missile->v,spread);
+		missile->die_time = get_time() + 500;
+	}
+}
+static void missile_die(particle_t*p){
+	particle_t *missile = NULL;
+	vec_t newdir = vec_new(random()%256 - 128, random()%256 - 128);
+	missile = factory_create_v(p->box.pos,P_MISSILE);
+	missile->v = vec_add(newdir,vec_scale(p->v,0.5));;
+	missile->die_time = get_time() + 500;
+	if(random()%100 <2){
+		missile->die = NULL;
 	}
 }
 
 int main(int argc, char**argv){
-	world_t*w = world_new(1000);
+	world_t*w = world_new(50000);
 	particle_t *p;
 	world_set(w);
 	printf("coucou\n");
+	background_set_color(0.05,0.05,0.05,1);
 	/* Player ship*/
 	p = particle_new(box_new(vec_new(0,0),vec_new(8,16),0),0);
 	p->draw = particle_draw_square;	
@@ -40,13 +53,14 @@ int main(int argc, char**argv){
 	p->think = particle_simple_think;
 	p->action = action;
 	p->vector[MISSILE] = vec_new(100,0);
-	particle_set_color(p,0.7,0.7,0,1);
+	particle_set_color(p,0.7,0.7,0,0.5);
 	particle_set_solid(p,1);
 	particle_set_camera(p,1);
 	factory_register(p,P_SHIP);
 
 	p = particle_new(box_new(vec_new(0,0),vec_new(50,50),0),1);
 	particle_set_color(p,0.5,0.5,0.5,1);
+	particle_set_alt_color(p,0.8,0.8,0.8,1);
 	p->draw = particle_draw_square;
 	particle_set_solid(p,1);
 	factory_register(p,P_WALL);
@@ -54,13 +68,17 @@ int main(int argc, char**argv){
 	p = particle_new(box_new(vec_new(0,0),vec_new(50,50),0),-1);
 
 	particle_set_color(p,0.1,0.1,0.1,1);
+	particle_set_alt_color(p,0,0,0,1);
 	p->draw = particle_draw_square;
 	factory_register(p,P_BG);
 
-	p = particle_new(box_new(vec_new(0,0),vec_new(4,4),0),2);
-	particle_set_color(p,1,0,0,1);
+	p = particle_new(box_new(vec_new(0,0),vec_new(3,3),0),2);
+	particle_set_color(p,0,0.5,1,0.7);
+	particle_set_alt_color(p,0.1,0.6,1,0.7);
 	p->draw = particle_draw_square;
 	p->move = particle_simple_move;
+	/*p->think = particle_simple_think;*/
+	p->die = missile_die;
 	factory_register(p,P_MISSILE);
 	
 	/*instanciate particles*/

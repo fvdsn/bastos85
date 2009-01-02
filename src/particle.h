@@ -21,6 +21,7 @@ typedef struct particle_s{
 	int flags;	
 	int camera;	/*1 if the camera follows this particle*/
 	float color[4];		
+	float altcolor[4];
 	float param[PARTICLE_PARAM_COUNT];
 	vmsec_t timer[PARTICLE_PARAM_COUNT];
 	vmsec_t timer_interval[PARTICLE_PARAM_COUNT];
@@ -102,6 +103,16 @@ int  particle_get_flag(const particle_t *p, int id);
  * @param a : in [0,1] the opacity component
  */
 void particle_set_color(particle_t*p,float r, float g, float b, float a);
+/**
+ * Sets the alternative color of the particle, used for outline and
+ * overlays
+ * @param p: the modified particle
+ * @param r : in [0,1] the red component
+ * @param g : in [0,1] the green component
+ * @param b : in [0,1] the blue component
+ * @param a : in [0,1] the opacity component
+ */
+void particle_set_alt_color(particle_t*p,float r, float g, float b, float a);
 /**
  * Sets the lifetime of the particle
  * @param p : the modified particle

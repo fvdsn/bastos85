@@ -5,10 +5,21 @@
 vec_t cam_pos;
 int win_w, win_h;
 
+/*vec_t [] circle_coord = {
+	{1.0,0.0},
+*/	
+
 float bg_color[4] = {0,0,0,1};
 void draw_init(void){
-	glClearColor(0.0,0.0,0.0,0.0);
-	glShadeModel(GL_FLAT);
+	glDisable(GL_DEPTH_TEST);
+	glClearColor(	bg_color[0],
+			bg_color[1],
+			bg_color[2],
+			bg_color[3]);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	/*glBlendFunc(GL_SRC_ALPHA,GL_ONE); ADDITIVE BLENDING */
+	/*glShadeModel(GL_FLAT);*/
 	/*glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0,1.0,0.0,1.0,-1.0,1.0);*/
@@ -31,19 +42,42 @@ void draw_reshape(int w, int h){
 	draw_redraw();
 }
 void draw_background(void){
+	glClearColor(	bg_color[0],
+			bg_color[1],
+			bg_color[2],
+			bg_color[3]);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 void particle_draw_square(particle_t*self){
 	vec_t ul = box_upperleft(self->box);
 	vec_t dr = box_downright(self->box);
-	glColor3f(	self->color[0],
+	glColor4f(	self->color[0],
 			self->color[1],
-			self->color[2]);
+			self->color[2],
+			self->color[3]);
 	glBegin(GL_POLYGON);
 		glVertex3f(ul.x,ul.y,0.0);
 		glVertex3f(dr.x,ul.y,0.0);
 		glVertex3f(dr.x,dr.y,0.0);
 		glVertex3f(ul.x,dr.y,0.0);
+	glEnd();
+	glColor4f(	self->altcolor[0],
+			self->altcolor[1],
+			self->altcolor[2],
+			self->altcolor[3]);
+	glBegin(GL_LINE_LOOP);
+		glVertex3f(ul.x,ul.y,0.1);
+		glVertex3f(dr.x,ul.y,0.1);
+		glVertex3f(dr.x,dr.y,0.1);
+		glVertex3f(ul.x,dr.y,0.1);
+	glEnd();
+}
+void particle_draw_point(particle_t*self){
+	glColor3f(	self->color[0],
+			self->color[1],
+			self->color[2]);
+	glBegin(GL_POINTS);
+		glVertex3f(self->box.pos.x,self->box.pos.y,0.0);
 	glEnd();
 }
 void draw_flush(void){
