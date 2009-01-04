@@ -1,0 +1,19 @@
+BASTOS 85
+---------
+Is a 2d game engine that will turn into a game once
+i'll get a more precise idea of what i want to do ! :P
+
+The idea is that the engine is made of particles that are
+like active objects. They are responsible of their drawing, movement,
+recieve and send events. 
+
+Performance are very nice with 60fps up to 3000 colliding particles. 
+
+Notes about the doc : 
+the doc is usually located in the headers unless the c code isn't trivial.
+
+
+INSTALL
+-------
+$make all	-> should get you a binary named engine.
+$make doc	-> if you have doxygen installed, will generate documentation in doc/ 
