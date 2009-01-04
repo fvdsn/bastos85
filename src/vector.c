@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 #include "vector.h"
 #define RADIAN(X)	((X)/180.0)*3.141592
 vec_t vec_new(float x, float y){
@@ -44,8 +45,8 @@ vec_t vec_normalize(vec_t a){
 vec_t vec_rotate(vec_t a, float angle){
 	float sina = sinf(RADIAN(angle));
 	float cosa = cosf(RADIAN(angle));
-	return vec_add(	vec_new(a.x*cosa,  a.y*sina),
-			vec_new(-a.y*sina, a.y*cosa)  );
+	return vec_new(	a.x*cosa - a.y*sina ,
+			a.x*sina + a.y*cosa  );
 
 }
 vec_t vec_diff(vec_t a, vec_t b){
@@ -54,7 +55,7 @@ vec_t vec_diff(vec_t a, vec_t b){
 	return b;
 }
 vec_t vec_project(vec_t a,vec_t b){
-	float d = vec_dot(a,b)
+	float d = vec_dot(a,b);
 	float l = b.x*b.x + b.y*b.y;
 	if(l == 0.0){
 		return vec_new(0,0);
@@ -67,7 +68,7 @@ vec_t vec_perp(vec_t a){
 	return vec_new(-a.y,a.x);
 }
 vec_t vec_smallest(vec_t a, vec_t b){
-	float alen = a.x*a.x + a.y*b.y;
+	float alen = a.x*a.x + a.y*a.y;
 	float blen = b.x*b.x + b.y*b.y;
 	if(alen < blen){
 		return a;
@@ -111,7 +112,7 @@ int box_intersect(box_t a, box_t b){
 	return 	(d.x < a.size.x + b.size.x) &&
 		(d.y < a.size.y + b.size.y);
 }
-static box_t box_rotate(box_t b, float angle){
+box_t box_rotate(box_t b, float angle){
 	b.axis0 = vec_rotate(b.axis0,angle);
 	b.axis1 = vec_rotate(b.axis1,angle);
 	return b;
@@ -169,13 +170,22 @@ static vec_t box_o_o_collision(box_t a, box_t b){
 	vec_t dist = vec_diff(b.pos,a.pos);
 	/* normalized axis of the box b. One of those axis will be the
 	 * surface normal. */
-	vec_t axn[2] = {b.axis0,b.axis1};
-
+	vec_t axn[2];	/* = {b.axis0, b.axis1}; */
+	float axl[2];	/* half axis length	*/
+	/* a half axis */
+	vec_t ahx0 = vec_scale(a.axis0,a.size.x);
+	vec_t ahx1 = vec_scale(a.axis1,a.size.y);
 	/*distance we need to displace a to remove the collision. 
 	 * (0,0) => no collision*/
-	float[2] col_vec = {0,0};
+	float col_vec[2] = { 0.0, 0.0 };
 	int i = 2;
+	axn[0] = b.axis0;
+	axn[1] = b.axis1;
+	axl[0] = b.size.x;
+	axl[1] = b.size.y;
+
 	while(i--){
+		float a1,a2,d;
 		/* we check if the distance from center to center is smaller
 		 * than the sum of the distance from center to box edges.
 		 * and that projected along each vector normal. 
@@ -183,12 +193,15 @@ static vec_t box_o_o_collision(box_t a, box_t b){
 		 * otherwise we have the displacement distance to remove 
 		 * the collision.
 		 */
-		col_vec[i] =      vec_absdot(axn[i],a.haxis0) 
-				+ vec_absdot(axn[i],a.haxis1)
-				- vec_absdot(axn[i],dist);	
+		a1 = vec_absdot(axn[i],ahx0);
+		a2 = vec_absdot(axn[i],ahx1);
+		d =  vec_absdot(axn[i],dist);
+		col_vec[i] =      a1 + a2 + axl[i] - d;
 		if(col_vec[i] <= 0){	/* No intersection ! */
 			return vec_new(0,0);
 		}
+		/*printf("a1:%f\t,a2:%f\t,b1:%f\t,d:%f\tr:%f\n",
+				a1,a2,axl[i],d,col_vec[i] );*/
 	}
 	/* col_vec has the distance we need to displace 'a' along axn[0],axn[1]
 	 * to remove the collision. We now need to pick the shortest 
@@ -200,7 +213,7 @@ static vec_t box_o_o_collision(box_t a, box_t b){
 		if(vec_dot(dist,axn[0]) > 0 ){
 			return vec_scale(axn[0], col_vec[0]);
 		}else{
-			return vec_scale(axn[0],-col_vec[1]);
+			return vec_scale(axn[0],-col_vec[0]);
 		}
 	}else{
 		if(vec_dot(dist,axn[1]) > 0){

@@ -54,26 +54,33 @@ void particle_draw_square(particle_t*self){
 	float px = self->box.pos.x;
 	float py = self->box.pos.y;
 
-	vec_t dr = box_downright(self->box);
 	glColor4f(	self->color[0],
 			self->color[1],
 			self->color[2],
 			self->color[3]);
 	glBegin(GL_POLYGON);
-		glVertex3f(px+h0.x,py+h1.y,0.0);
-		glVertex3f(px-h1.x,py+h1.y,0.0);
-		glVertex3f(px-h1.x,px-h1.y,0.0);
-		glVertex3f(px+h1.x,py-h1.y,0.0);
+		glVertex3f(px +h0.x +h1.x, py +h0.y +h1.y,0.0);
+		glVertex3f(px -h0.x +h1.x, py -h0.y +h1.y,0.0);
+		glVertex3f(px -h0.x -h1.x, py -h0.y -h1.y,0.0);
+		glVertex3f(px +h0.x -h1.x, py +h0.y -h1.y,0.0);
 	glEnd();
 	glColor4f(	self->altcolor[0],
 			self->altcolor[1],
 			self->altcolor[2],
 			self->altcolor[3]);
 	glBegin(GL_LINE_LOOP);
-		glVertex3f(px+h0.x,py+h1.y,0.0);
-		glVertex3f(px-h1.x,py+h1.y,0.0);
-		glVertex3f(px-h1.x,px-h1.y,0.0);
-		glVertex3f(px+h1.x,py-h1.y,0.0);
+		glVertex3f(px +h0.x +h1.x, py +h0.y +h1.y,0.0);
+		glVertex3f(px -h0.x +h1.x, py -h0.y +h1.y,0.0);
+		glVertex3f(px -h0.x -h1.x, py -h0.y -h1.y,0.0);
+		glVertex3f(px +h0.x -h1.x, py +h0.y -h1.y,0.0);
+	glEnd();
+	glBegin(GL_LINES);
+		glVertex3f(px,py,0.0);
+		glVertex3f(px+h1.x,py+h1.y,0.0);
+	glEnd();
+	glBegin(GL_LINES);
+		glVertex3f(px,py,0.0);
+		glVertex3f(px+h0.x*0.5,py+h0.y*0.5,0.0);
 	glEnd();
 }
 void particle_draw_point(particle_t*self){

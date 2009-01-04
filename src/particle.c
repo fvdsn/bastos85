@@ -109,6 +109,7 @@ void particle_simple_think(particle_t *self){
 	self->color[0] = self->color[1];
 	self->color[1] = self->color[2];
 	self->color[2] = tmp;
+	self->box = box_rotate(self->box,2.5);
 }
 void particle_simple_action(particle_t *self){
 	int speed = 300;
