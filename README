@@ -15,5 +15,5 @@ the doc is usually located in the headers unless the c code isn't trivial.
 
 INSTALL
 -------
-$make all	-> should get you a binary named engine.
+$make all	-> should get you a binary named game.
 $make doc	-> if you have doxygen installed, will generate documentation in doc/ 
