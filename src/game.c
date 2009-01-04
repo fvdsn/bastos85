@@ -46,7 +46,7 @@ int main(int argc, char**argv){
 	world_set(w);
 	background_set_color(0.05,0.05,0.05,1);
 	/* Player ship*/
-	p = particle_new(box_new(vec_new(0,0),vec_new(8,16),0),0);
+	p = particle_new(box_new(vec_new(0,0),8,16),0);
 	p->draw = particle_draw_square;	
 	p->move = particle_simple_move;
 	p->think = particle_simple_think;
@@ -57,21 +57,21 @@ int main(int argc, char**argv){
 	particle_set_camera(p,1);
 	factory_register(p,P_SHIP);
 
-	p = particle_new(box_new(vec_new(0,0),vec_new(50,50),0),1);
+	p = particle_new(box_new(vec_new(0,0),50,50),1);
 	particle_set_color(p,0.5,0.5,0.5,1);
 	particle_set_alt_color(p,0.8,0.8,0.8,1);
 	p->draw = particle_draw_square;
 	particle_set_solid(p,1);
 	factory_register(p,P_WALL);
 
-	p = particle_new(box_new(vec_new(0,0),vec_new(50,50),0),-1);
+	p = particle_new(box_new(vec_new(0,0),50,50),-1);
 
 	particle_set_color(p,0.1,0.1,0.1,1);
 	particle_set_alt_color(p,0,0,0,1);
 	p->draw = particle_draw_square;
 	factory_register(p,P_BG);
 
-	p = particle_new(box_new(vec_new(0,0),vec_new(3,3),0),2);
+	p = particle_new(box_new(vec_new(0,0),3,3),2);
 	particle_set_color(p,0,0.5,1,0.7);
 	particle_set_alt_color(p,0.1,0.6,1,0.7);
 	p->draw = particle_draw_square;

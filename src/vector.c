@@ -53,6 +53,16 @@ vec_t vec_diff(vec_t a, vec_t b){
 	b.y -= a.y;
 	return b;
 }
+vec_t vec_project(vec_t a,vec_t b){
+	float d = vec_dot(a,b)
+	float l = b.x*b.x + b.y*b.y;
+	if(l == 0.0){
+		return vec_new(0,0);
+	}else{
+		d /= l;
+		return vec_new(d*b.x, d*b.y);
+	}
+}
 vec_t vec_perp(vec_t a){
 	return vec_new(-a.y,a.x);
 }
@@ -88,38 +98,42 @@ float vec_dist(vec_t a,vec_t b){
 int vec_zero(vec_t a){
 	return (a.x == 0) && (a.y == 0);
 }
-box_t box_new(vec_t p,vec_t d, float a){ 
+box_t box_new(vec_t p, float width, float height){ 
 	box_t b;
 	b.pos = p;
-	b.corner = vec_abs(vec_scale(d,0.5));
+	b.size = vec_abs(vec_new(width/2.0,height/2.0));
 	b.axis0 = vec_new(1,0);
 	b.axis1 = vec_new(0,1);
-	b.angle = a;
 	return b;
 }
 int box_intersect(box_t a, box_t b){
 	vec_t d = vec_abs(vec_diff(a.pos, b.pos));
-	return 	(d.x < a.corner.x + b.corner.x) &&
-		(d.y < a.corner.y + b.corner.y);
+	return 	(d.x < a.size.x + b.size.x) &&
+		(d.y < a.size.y + b.size.y);
+}
+static box_t box_rotate(box_t b, float angle){
+	b.axis0 = vec_rotate(b.axis0,angle);
+	b.axis1 = vec_rotate(b.axis1,angle);
+	return b;
 }
 vec_t box_intersect_vector(box_t a, box_t b){
 	vec_t d = vec_diff(a.pos, b.pos);
 	vec_t r = vec_new(0,0);
 	if (d.x >= 0){
-		r.x = (b.pos.x - b.corner.x) - (a.pos.x + a.corner.x);
+		r.x = (b.pos.x - b.size.x) - (a.pos.x + a.size.x);
 		if ( r.x > 0)
 			r.x = 0;
 	}else{
-		r.x =  (b.pos.x + b.corner.x) - (a.pos.x - a.corner.x);
+		r.x =  (b.pos.x + b.size.x) - (a.pos.x - a.size.x);
 		if (r.x < 0)
 			r.x = 0;
 	}
 	if (d.y >= 0){
-		r.y = (b.pos.y - b.corner.y) - (a.pos.y + a.corner.y);
+		r.y = (b.pos.y - b.size.y) - (a.pos.y + a.size.y);
 		if ( r.y > 0)
 			r.y = 0;
 	}else{
-		r.y =  (b.pos.y + b.corner.y) - (a.pos.y - a.corner.y);
+		r.y =  (b.pos.y + b.size.y) - (a.pos.y - a.size.y);
 		if (r.y < 0)
 			r.y = 0;
 	}
@@ -131,19 +145,11 @@ vec_t box_intersect_vector(box_t a, box_t b){
 	}
 	return r;
 }
-box_t box_floor(box_t a, int height){
-	vec_t *pos = &(a.pos);
-	vec_t *corner = &(a.corner);
-	if(pos->y < height + corner->y){
-		pos->y = height + corner->y;
-	}
-	return a;
-}
 vec_t box_upperleft(box_t a){
-	return vec_add(a.pos,vec_scale(a.corner,-1.0));
+	return vec_add(a.pos,vec_scale(a.size,-1.0));
 }
 vec_t box_downright(box_t a){
-	return vec_add(a.pos,a.corner);
+	return vec_add(a.pos,a.size);
 }
 /**
  * Collision detection of two box with arbitrary angles. Does
@@ -164,11 +170,7 @@ static vec_t box_o_o_collision(box_t a, box_t b){
 	/* normalized axis of the box b. One of those axis will be the
 	 * surface normal. */
 	vec_t axn[2] = {b.axis0,b.axis1};
-	/*half axes of the box a and b*/
-	vec_t axl[4] = {	vec_scale(b.axis0,b.corner.x),
-				vec_scale(b.axis1,b.corner.y),
-				vec_scale(a.axis0,a.corner.x),
-				vec_scale(a.axis1,a.corner.y)	};
+
 	/*distance we need to displace a to remove the collision. 
 	 * (0,0) => no collision*/
 	float[2] col_vec = {0,0};
@@ -181,9 +183,8 @@ static vec_t box_o_o_collision(box_t a, box_t b){
 		 * otherwise we have the displacement distance to remove 
 		 * the collision.
 		 */
-		col_vec[i] = 	  axl[i] 
-				+ vec_absdot(axn[i],axl[3]) 
-				+ vec_absdot(axn[i],axl[4])
+		col_vec[i] =      vec_absdot(axn[i],a.haxis0) 
+				+ vec_absdot(axn[i],a.haxis1)
 				- vec_absdot(axn[i],dist);	
 		if(col_vec[i] <= 0){	/* No intersection ! */
 			return vec_new(0,0);
@@ -209,7 +210,7 @@ static vec_t box_o_o_collision(box_t a, box_t b){
 		}
 	}
 }
-static vec_t box_oriented_collision(box_t a, box_t b){
+vec_t box_oriented_collision(box_t a, box_t b){
 	vec_t d1;
 	vec_t d2;
 	d1 = box_o_o_collision(a,b);

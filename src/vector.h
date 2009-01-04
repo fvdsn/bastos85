@@ -67,6 +67,13 @@ vec_t vec_rotate(vec_t a, float angle);
  */
 vec_t vec_diff(vec_t a, vec_t b);
 /**
+ * Projects a vector onto another
+ * @param a : the vector to be projected
+ * @param b : the target vector
+ * @return : the projection of a on b, or (0,0) if b is (0,0)
+ */
+vec_t vec_project(vec_t a, vec_t b);
+/**
  * Returns a vector perpendicular to a, of the same length as a. 
  * @param a : a vector
  * @return a vector perpendicular to a.
@@ -113,20 +120,24 @@ int vec_zero(vec_t a);
  */
 typedef struct box_s{
 	vec_t pos;	/*the coordinate of the center of the box*/
-	vec_t corner;	/*the upper right corer coordinates from the center*/
+	vec_t size;	/*the upper right corer coordinates from the center*/
 	vec_t axis0;	/*normalized axis. Its orientation gives the angle */
 	vec_t axis1;	/*normalized secondary axis, perpendicular to axis0*/
-	float angle;	/*the angle of rotation of the box*/
 }box_t;
 /**
  * Creates a new box.
  * @param pos : the center of the box
- * @param dimensions : a vector where x is the width, and y the height of the
- * box
- * @param angle : the initial angle of the box
+ * @param width : the width (WE) of the box
+ * @param height : the height (NS) of the box.
  * @return the new box
  */
-box_t box_new(vec_t pos, vec_t dimensions, float angle); 
+box_t box_new(vec_t pos, float width, float height);
+/**
+ * Rotates the box counterclockwise.
+ * @param b : the rotating box.
+ * @param angle : in ]-360,360[ the rotating angle (ccw) in degrees.
+ */
+box_t box_rotate(box_t b, float angle);
 /**
  * Creates a new vector at the upper left corner of the box.
  * @param a : the box
@@ -156,15 +167,8 @@ int   box_intersect(box_t a, box_t b);
  * it will return (0,0)
  */
 vec_t box_intersect_vector(box_t a, box_t b);
-vec_t box_full_collision(box_t a, vec_t av, box_t b, vec_t bv);
-/**
- * Prevents the box from going below a certain height
- * @param a : the box
- * @param height : the minimum height :
- * @return : a new box, the same as the old one if it wasn't below height,
- * a new one just above heihgt if it was below
- */
-box_t box_floor(box_t a,int height);
+vec_t box_aligned_collision(box_t a, box_t b);
+vec_t box_oriented_collision(box_t a, box_t b);
 
 #endif
 

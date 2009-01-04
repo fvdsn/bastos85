@@ -21,7 +21,7 @@ particle_t *factory_create_v(vec_t pos, int klass){
 	if(klass < 0 || klass >= MAX_KLASS_COUNT || klass_table[klass] == NULL){
 		return NULL;
 	}else{
-		p = particle_new(box_new(pos,vec_new(10,10),0),0);
+		p = particle_new(box_new(pos,10,10),0);
 		memcpy(p,klass_table[klass],sizeof(particle_t));
 		p->box.pos = pos;
 		world_add_particle(world_get(),p);
@@ -33,10 +33,10 @@ particle_t *factory_create(float x, float y, int klass){
 }
 particle_t *factory_resized_v(vec_t tl, vec_t tr, int klass){
 	vec_t pos = vec_scale(vec_add(tl,tr),0.5);
-	vec_t corner = vec_abs(vec_diff(pos,tr));
+	vec_t size = vec_abs(vec_diff(pos,tr));
 	particle_t *p = factory_create_v(pos,klass);
 	if(p!=NULL){
-		p->box.corner = corner;
+		p->box.size = size;
 	}
 	return p;
 }

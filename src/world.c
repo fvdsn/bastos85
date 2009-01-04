@@ -129,7 +129,7 @@ void do_physics(world_t *w){
 	particle_t *p = NULL;
 	int j = 0;
 	particle_t *q = NULL;
-	box_t b = box_new(vec_new(0,0),vec_new(10,10),0);
+	box_t b = box_new(vec_new(0,0),10,10);
 	vec_t d = vec_new(0,0);
 	while((p = world_next_moving(w,&i))){
 		j = 0;
