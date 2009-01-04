@@ -55,12 +55,14 @@ void set_fps(int fps){
 	frame_interval = 1000/fps;
 }
 void wait_frame(void){
+	unsigned long wt;
 	struct timespec w_time;
 	vmsec_t now = get_real_time();
 	while(last_frame_time + frame_interval > now){
 		vmsec_t wait_time = last_frame_time + frame_interval - now;
-		w_time.tv_sec = wait_time / 1000;
-		w_time.tv_nsec = (wait_time % 1000) * 1000000;
+		wt = (unsigned long)wait_time;
+		w_time.tv_sec = wt / 1000;
+		w_time.tv_nsec = (wt % 1000) * 1000000;
 		nanosleep(&w_time,NULL);
 		now = get_real_time();
 	}

@@ -16,6 +16,12 @@ typedef struct vec_s{
  */
 vec_t  vec_new(float x, float y);
 /**
+ * Creates a new vector with polar coordinates.
+ * @param angle: the angle in degrees of the vector. 0 is East, 90 is North
+ * @param length: the length of the vector.
+ */
+vec_t  vec_polar(float angle, float length);
+/**
  * Adds two vectors
  * @return : a vector that is the sum of a and b
  */
@@ -40,12 +46,46 @@ vec_t vec_abs(vec_t a);
  */
 vec_t vec_scale(vec_t a, float factor);
 /**
+ * Normalizes a vector
+ * @param a vector
+ * @return: a vector with length 1 and the same direction. 
+ * if a is zero then return vector zero.
+ */
+vec_t vec_normalize(vec_t a);
+/** 
+ * rotate the vector counterclockwise 
+ * @param a : a vector.
+ * @param angle : angle in ]-360,360[ rotation in degrees.
+ * @return : the vector rotated by angle.
+ */
+vec_t vec_rotate(vec_t a, float angle);
+/**
  * Returns the vector from a to b
  * @param a : the source vector
  * @param b : the destination vector
  * @return : a vector c such as a + c = b
  */
 vec_t vec_diff(vec_t a, vec_t b);
+/**
+ * Returns a vector perpendicular to a, of the same length as a. 
+ * @param a : a vector
+ * @return a vector perpendicular to a.
+ */
+vec_t vec_perp(vec_t a);
+/**
+ * Returns the vector with the smallest length.
+ * Far more efficient than comparing vec_len.
+ * @param a : a vector
+ * @param b : a vector
+ * @return a if it's len is smaller than b's len, b otherwise.
+ */
+vec_t vec_smallest(vec_t a, vec_t b);
+/**
+ * Dot product between vector a and b
+ * @param a : a vector
+ * @param b : a vector
+ */
+float vec_dot(vec_t a, vec_t b);
 /**
  * Returns the Norm 0 length of a vector (maximum of its coordinates)
  * @param a : a vector (x,y)
@@ -57,6 +97,13 @@ float vec_len(vec_t a);
  */
 float vec_dist(vec_t a, vec_t b);
 /**
+ * Return the angle of the vector.
+ * @param a : a vector.
+ * @return 0 if the vector is zero, else x in [0,360[ where
+ * x is the angle of the vector. 0 is East, 90 is North
+ */
+float vec_angle(vec_t a);
+/**
  * Returns 1 if a is the zero vector, 0 otherwize
  */
 int vec_zero(vec_t a);
@@ -67,6 +114,8 @@ int vec_zero(vec_t a);
 typedef struct box_s{
 	vec_t pos;	/*the coordinate of the center of the box*/
 	vec_t corner;	/*the upper right corer coordinates from the center*/
+	vec_t axis0;	/*normalized axis. Its orientation gives the angle */
+	vec_t axis1;	/*normalized secondary axis, perpendicular to axis0*/
 	float angle;	/*the angle of rotation of the box*/
 }box_t;
 /**
@@ -107,6 +156,7 @@ int   box_intersect(box_t a, box_t b);
  * it will return (0,0)
  */
 vec_t box_intersect_vector(box_t a, box_t b);
+vec_t box_full_collision(box_t a, vec_t av, box_t b, vec_t bv);
 /**
  * Prevents the box from going below a certain height
  * @param a : the box

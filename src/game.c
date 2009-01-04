@@ -26,15 +26,15 @@ static void action(particle_t*p){
 		missile = factory_create_v(p->box.pos,P_MISSILE);
 		missile->v = vec_add(p->vector[MISSILE],p->v);
 		missile->v = vec_add(missile->v,spread);
-		missile->die_time = get_time() + 500;
+		missile->die_time = get_time() + random()%1000;
 	}
 }
 static void missile_die(particle_t*p){
 	particle_t *missile = NULL;
 	vec_t newdir = vec_new(random()%256 - 128, random()%256 - 128);
 	missile = factory_create_v(p->box.pos,P_MISSILE);
-	missile->v = vec_add(newdir,vec_scale(p->v,0.5));;
-	missile->die_time = get_time() + 500;
+	missile->v = vec_add(newdir,vec_scale(p->v,0.7));;
+	missile->die_time = get_time() + random()%250;
 	if(random()%100 <2){
 		missile->die = NULL;
 	}
