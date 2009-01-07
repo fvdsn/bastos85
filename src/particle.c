@@ -124,7 +124,7 @@ void 	particle_do_nprop(particle_t*p, float dt){
 	int i = PARTICLE_PARAM_COUNT;
 	while(i--){
 		/*TODO do not animate non existing properties*/
-		nprop_animate(p->nprop[i],dt);
+		p->nprop[i] = nprop_animate(p->nprop[i],dt);
 	}
 }
 void    particle_set_vprop(particle_t*p, int id, vprop_t vp){
@@ -143,7 +143,7 @@ void 	particle_do_vprop(particle_t*p, float dt){
 	int i = PARTICLE_PARAM_COUNT;
 	while(i--){
 		/*TODO do not animate non existing properties*/
-		vprop_animate(p->vprop[i],dt);
+		p->vprop[i] = vprop_animate(p->vprop[i],dt);
 	}
 }
 int particle_z_sort(const void *a, const void *b){

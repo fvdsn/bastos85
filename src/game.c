@@ -16,9 +16,36 @@
 /**called every frame on the player ship*/
 static void action(particle_t*p){
 #define MISSILE 0
+#define SHIP_SPEED 350
+#define SHIP_ACCEL 2000
+#define SHIP_VSPEED 0
+#define SHIP_HSPEED 1
 	particle_t * missile = NULL;
 	vec_t spread = vec_new(random()%100 - 50,random()%100 -50);
-	particle_simple_action(p);
+	
+	nprop_t vspeed = particle_get_nprop(p,SHIP_VSPEED);
+	nprop_t hspeed = particle_get_nprop(p,SHIP_HSPEED);
+
+	if(key_pressed('a')){
+		hspeed = nprop_set(hspeed,-SHIP_SPEED);
+	}else if(key_pressed('d')){
+		hspeed = nprop_set(hspeed,SHIP_SPEED);
+	}else{
+		hspeed = nprop_set(hspeed,0);
+	}
+	if(key_pressed('w')){
+		vspeed = nprop_set(vspeed,SHIP_SPEED);
+	}else if(key_pressed('s')){
+		vspeed = nprop_set(vspeed,-SHIP_SPEED);
+	}else{
+		vspeed = nprop_set(vspeed,0);
+	}
+	
+	particle_set_nprop(p,SHIP_VSPEED,vspeed);
+	particle_set_nprop(p,SHIP_HSPEED,hspeed);
+	p->v = vec_new(nprop_get(hspeed),nprop_get(vspeed));
+
+	/*particle_simple_action(p);*/
 	if(!vec_zero(p->v)){
 		p->vector[MISSILE] = p->v;
 	}
@@ -76,6 +103,8 @@ int main(int argc, char**argv){
 	particle_set_collides(p,1);
 	particle_set_camera(p,1);
 	particle_set_solid(p,0);
+	particle_set_nprop(p,SHIP_HSPEED,nprop_new(0,SHIP_ACCEL));
+	particle_set_nprop(p,SHIP_VSPEED,nprop_new(0,SHIP_ACCEL));
 	factory_register(p,P_SHIP);
 	
 	/*------------------------------------------*\
