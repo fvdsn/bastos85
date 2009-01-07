@@ -7,6 +7,8 @@
 vprop_t vprop_new(vec_t val){
 	vprop_t vp;
 	vp.val = val;
+	vp.speed = 0.0;
+	vp.target = val;
 	return vp;
 }
 vec_t   vprop_get(vprop_t vp){
@@ -43,6 +45,8 @@ nprop_t nprop_new(float val, float speed){
 	nprop_t np;
 	np.val = val;
 	np.speed = speed;
+	np.target = val;
+	np.max = 0.0;
 	return np;
 }
 float   nprop_get(nprop_t np){

@@ -1,8 +1,8 @@
 CC = gcc
-FLAGS = -Wall -Werror -Wextra -pedantic -Wno-unused-parameter -g -Wdeclaration-after-statement -Wmissing-declarations -Wpointer-arith -Wstrict-prototypes -Wredundant-decls -Wcast-align -Wwrite-strings -Winline -Wformat-security -Wformat-nonliteral -Wswitch-enum -Wswitch-default -Winit-self
+FLAGS = -g -O3 -Wall -Werror -Wextra -pedantic -Wno-unused-parameter -g -Wdeclaration-after-statement -Wmissing-declarations -Wpointer-arith -Wstrict-prototypes -Wredundant-decls -Wcast-align -Wwrite-strings -Winline -Wformat-security -Wformat-nonliteral -Wswitch-enum -Wswitch-default -Winit-self
 LIBS = -lglut
 
-all : game
+all : Makefile game
 
 game: game.o
 	${CC} ${FLAGS} ${LIBS} -o game world.o particle.o draw.o vector.o virtual_time.o keyboard.o factory.o game.o property.o
