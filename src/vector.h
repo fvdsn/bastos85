@@ -114,6 +114,13 @@ float vec_angle(vec_t a);
  * Returns 1 if a is the zero vector, 0 otherwize
  */
 int vec_zero(vec_t a);
+/** 
+ * Checks vector for equality.
+ * @param a : a vector
+ * @param b : a vector
+ * @return 1 if the vector have the same coordinates, 0 otherwise
+ */
+int vec_equal(vec_t a,vec_t b);
 
 /**
  * A not so fancy box.

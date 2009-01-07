@@ -1,41 +1,63 @@
 #ifndef __2D_PARTICLE_H__
 #define __2D_PARTICLE_H__
+
 #include "virtual_time.h"
 #include "vector.h"
+#include "property.h"
 
-#define PARTICLE_PARAM_COUNT 8
-typedef struct particle_s{
-	box_t box;		/*position and size*/
-	float z;		/*depth*/
-	vec_t v;		/*speed*/
-	vec_t a;		/*acceleration*/
-	float mass;		
-	vec_t air_friction;	
-	vec_t ground_friction;
-	int solid;		/*1 if the recieves collisions*/
-	int collides;		/*1 if the particles makes collisions*/
-	int life;		/*dead if <= 0 */
-	vmsec_t die_time;	/*time when the particle will die*/
-	vmsec_t next_think;	/*time when the particle will think*/
-	vmsec_t think_interval; /*time between think*/
-	int think_count;	/*number of time the particle has thought*/
-	int flags;	
-	int camera;	/*1 if the camera follows this particle*/
-	float color[4];		
-	float altcolor[4];
-	float param[PARTICLE_PARAM_COUNT];
-	vmsec_t timer[PARTICLE_PARAM_COUNT];
-	vmsec_t timer_interval[PARTICLE_PARAM_COUNT];
-	vec_t vector[PARTICLE_PARAM_COUNT];
+#define PARTICLE_PARAM_COUNT 4
+
+typedef struct ptimer_s ptimer_t;
+typedef struct particle_s particle_t;
+
+struct ptimer_s{
+	vmsec_t next_time;
+	vmsec_t timer_interval;
+	void (*timer)(particle_t *self);
+};
+
+struct particle_s{
+	/* PHYSICS */
+	box_t 	box;		/*position and size*/
+	float 	z;		/*depth*/
+	vec_t 	v;		/*speed*/
+	vec_t 	a;		/*acceleration*/
+	float	mass;		
+	vec_t 	air_friction;	
+	vec_t 	ground_friction;
+	int 	solid;		/*1 if the recieves collisions*/
+	int 	collides;		/*1 if the particles makes collisions*/
+	
+	/* LOGIC */
+	int 	life;		/*dead if <= 0 */
+	vmsec_t die_time;
 	struct particle_s *parent;
+
+	/* GRAPHICS */
+	int 	camera;		/*1 if the camera follows this particle*/
+	float 	color[4];		
+	float 	altcolor[4];
+	
+	/*PARAMS*/
+	int 	 flags;	
+	int	 ptimer_count;
+	int	 has_prop;
+	float 	 param[PARTICLE_PARAM_COUNT];
+	vec_t 	 vector[PARTICLE_PARAM_COUNT];
+	vmsec_t  time[PARTICLE_PARAM_COUNT];
+	ptimer_t ptimer[PARTICLE_PARAM_COUNT];
+	nprop_t  nprop[PARTICLE_PARAM_COUNT];
+	vprop_t  vprop[PARTICLE_PARAM_COUNT];
+
+	/*CALLBACKS*/
 	void (*move)(struct particle_s *self);
 	void (*damage)(struct particle_s *self,  struct particle_s *source, int damage);
 	void (*collide)(struct particle_s *self, struct particle_s *source);
 	void (*die)(struct particle_s *self);
-	void (*think)(struct particle_s *self);
 	void (*draw)(struct particle_s *self);
 	void (*action)(struct particle_s *self);
-}particle_t;
+};
+
 /**
  * Creates a new particle
  * The default think interval is 100msec
@@ -160,6 +182,21 @@ float particle_get_param(particle_t*p, int id);
 /**
  * A function used to sort the particles by increasing z values
  */
+
+void particle_add_timer(particle_t*p, void (*func)(particle_t*p),vmsec_t timer);
+int  particle_has_timer(particle_t*p);
+void particle_do_timer(particle_t*p,vmsec_t now);
+
+int	particle_has_prop(particle_t*p);
+
+void    particle_set_nprop(particle_t*p, int id, nprop_t np);
+nprop_t particle_get_nprop(particle_t*p, int id);
+void 	particle_do_nprop(particle_t*p,  float sec_dt);
+
+void    particle_set_vprop(particle_t*p, int id, vprop_t vp);
+nprop_t particle_get_vprop(particle_t*p, int id);
+void 	particle_do_vprop(particle_t*p, float sec_dt);
+
 int particle_z_sort(const void *a, const void *b);
 /*simple draw functions */
 void particle_draw_console(particle_t *self);

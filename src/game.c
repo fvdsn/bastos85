@@ -22,8 +22,8 @@ static void action(particle_t*p){
 	if(!vec_zero(p->v)){
 		p->vector[MISSILE] = p->v;
 	}
-	if(key_pressed(' ') && get_time() > p->timer[MISSILE]){
-		p->timer[MISSILE] = get_time() + 1;
+	if(key_pressed(' ') && get_time() > p->time[MISSILE]){
+		p->time[MISSILE] = get_time() + 1;
 		missile = factory_create_v(p->box.pos,P_MISSILE);
 		missile->v = vec_add(p->vector[MISSILE],p->v);
 		missile->v = vec_add(missile->v,spread);
@@ -41,7 +41,7 @@ static void missile_die(particle_t*p){
 	missile->v = vec_add(newdir,vec_scale(p->v,0.7));;
 	missile->die_time = get_time() + random()%1000 + 250;
 	missile->box = box_rotate(missile->box,random()%360);
-	if(random()%100 <2){
+	if(random()%100 <1){
 		missile->die = NULL;
 	}
 }
@@ -101,7 +101,7 @@ int main(int argc, char**argv){
 	/*------------------------------------------*\
 	 * MISSILES
 	\*------------------------------------------*/
-	p = particle_new(box_new(vec_new(0,0),20,20),2);
+	p = particle_new(box_new(vec_new(0,0),10,10),2);
 	particle_set_color(p,0,0.5,1,0.1);
 	particle_set_alt_color(p,0.1,0.6,1,0.1);
 	p->draw = particle_draw_square;
@@ -129,8 +129,7 @@ int main(int argc, char**argv){
 	factory_resized(-400,200,400,150,P_WALL);
 	factory_resized(400,50,350,-150,P_WALL);
 	p = factory_resized(-400,150,-350,-50,P_WALL);
-	p->think = wall_rotate;
-	p->think_interval = 10;
+	particle_add_timer(p,wall_rotate,10);
 	
 	/*running the world*/
 

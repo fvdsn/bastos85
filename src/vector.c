@@ -99,6 +99,12 @@ float vec_dist(vec_t a,vec_t b){
 int vec_zero(vec_t a){
 	return (a.x == 0) && (a.y == 0);
 }
+int vec_equal(vec_t a, vec_t b){
+	return a.x == b.x && a.y == b.y;
+}
+/*-----------------------*\
+ * BOX
+\*-----------------------*/
 box_t box_new(vec_t p, float width, float height){ 
 	box_t b;
 	b.pos = p;

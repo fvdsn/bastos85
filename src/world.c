@@ -94,7 +94,8 @@ void world_setup_iterators(world_t*w){
 	w->visible_particle_count = 0;
 	w->solid_particle_count = 0;
 	while((p=world_next_particle(w,&i))){
-		if(p->think || p->action || p->die_time || particle_is_camera(p)){
+		if(	   particle_has_timer(p) || particle_has_prop(p) 
+			|| p->action || p->die_time || particle_is_camera(p)){
 			w->thinking_particle[w->thinking_particle_count] = p;
 			w->thinking_particle_count++;
 		}
@@ -180,10 +181,12 @@ void do_think(world_t *w){
 		if (p->action){
 			p->action(p);
 		}
-		if (p->think && (get_time() > p->next_think)){
-			p->think(p);
-			p->next_think = get_time() + p->think_interval;
-			p->think_count++;
+		if (particle_has_prop(p)){
+			particle_do_nprop(p,get_dtime_sec());
+			particle_do_vprop(p,get_dtime_sec());
+		}
+		if (particle_has_timer(p)){
+			particle_do_timer(p,get_time());
 		}
 		if (p->die_time && (get_time() > p->die_time)){
 			particle_kill(p);

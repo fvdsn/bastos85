@@ -4,12 +4,12 @@
 #include "particle.h"
 #include "virtual_time.h"
 #include "keyboard.h"
+
 particle_t *particle_new(box_t box, float z){
 	particle_t *p = (particle_t*)malloc(sizeof(particle_t));
 	memset(p,0,sizeof(particle_t));
 	p->box = box;
 	p->z = z;
-	p->think_interval = 100;
 	p->life = 1;
 	return p;
 }
@@ -77,6 +77,74 @@ void particle_set_camera(particle_t *p, int trueorfalse){
 }
 int particle_is_camera(particle_t *p){
 	return p->camera;
+}
+void particle_add_timer(particle_t*p, void (*timer)(particle_t*p),vmsec_t ti){
+	if(p->ptimer_count < PARTICLE_PARAM_COUNT){
+		/* FIXME if(ti < 0){ ti = - ti; } Could be useful if vmsec_t
+		 * becomes signed ... */
+		p->ptimer[p->ptimer_count].timer_interval = ti;
+		p->ptimer[p->ptimer_count].timer = timer;
+		p->ptimer[p->ptimer_count].next_time = 0;
+		p->ptimer_count++;
+	}
+}
+int  particle_has_timer(particle_t*p){
+	return p->ptimer_count;
+}
+void particle_do_timer(particle_t*p,vmsec_t now){
+	int i = p->ptimer_count;
+	while(i--){
+		if(p->ptimer[i].next_time <= get_time()){
+			/*FIXME : timer is called max once per frame ! should
+			 * be called once every timer_interval.*/
+			p->ptimer[i].next_time = get_time() + p->ptimer[i].timer_interval;
+			if(p->ptimer[i].timer){
+				p->ptimer[i].timer(p);
+			}
+		}
+	}
+}
+int	particle_has_prop(particle_t*p){
+	return p->has_prop;
+}
+
+void    particle_set_nprop(particle_t*p, int id, nprop_t np){
+	if(id >=0 && id < PARTICLE_PARAM_COUNT){
+		p->nprop[id] =	np;
+		p->has_prop = 1;
+	}
+}
+nprop_t particle_get_nprop(particle_t*p, int id){
+	if(!(id >=0 && id < PARTICLE_PARAM_COUNT)){
+		printf("ERROR: particle_get_nprop(): invalid nprop id :%d\n",id);
+	}
+	return p->nprop[id];
+}
+void 	particle_do_nprop(particle_t*p, float dt){
+	int i = PARTICLE_PARAM_COUNT;
+	while(i--){
+		/*TODO do not animate non existing properties*/
+		nprop_animate(p->nprop[i],dt);
+	}
+}
+void    particle_set_vprop(particle_t*p, int id, vprop_t vp){
+	if(id >=0 && id < PARTICLE_PARAM_COUNT){
+		p->vprop[id] =	vp;
+		p->has_prop = 1;
+	}
+}
+nprop_t particle_get_vprop(particle_t*p, int id){
+	if(!(id >=0 && id < PARTICLE_PARAM_COUNT)){
+		printf("ERROR: particle_get_vprop(): invalid nprop id :%d\n",id);
+	}
+	return p->nprop[id];
+}
+void 	particle_do_vprop(particle_t*p, float dt){
+	int i = PARTICLE_PARAM_COUNT;
+	while(i--){
+		/*TODO do not animate non existing properties*/
+		vprop_animate(p->vprop[i],dt);
+	}
 }
 int particle_z_sort(const void *a, const void *b){
 	particle_t *pa = *(particle_t**)a;
