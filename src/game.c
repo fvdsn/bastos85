@@ -44,9 +44,9 @@ static void action(particle_t*p){
 	particle_set_nprop(p,SHIP_VSPEED,vspeed);
 	particle_set_nprop(p,SHIP_HSPEED,hspeed);
 	p->v = vec_new(nprop_get(hspeed),nprop_get(vspeed));
-
-	/*particle_simple_action(p);*/
-	if(!vec_zero(p->v)){
+	
+	if(vec_len(p->v) > 10.0){
+		p->box = box_direct(p->box,p->v);
 		p->vector[MISSILE] = p->v;
 	}
 	if(key_pressed(' ') && get_time() > p->time[MISSILE]){

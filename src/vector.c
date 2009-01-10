@@ -96,6 +96,21 @@ float vec_len(vec_t a){
 float vec_dist(vec_t a,vec_t b){
 	return vec_len(vec_diff(a,b));
 }
+float vec_angle(vec_t a){
+	float angle = 0;
+	if(a.x == 0.0){
+		if(a.y > 0.0 ){
+			return 90.0;
+		}else if (a.y < 0.0 ){
+			return -90.0;
+		}else{
+			return 0.0;
+		}
+	}else{
+		angle = atanf(a.y/a.x);
+		return angle*180.0/3.141592;
+	}
+}
 int vec_zero(vec_t a){
 	return (a.x == 0) && (a.y == 0);
 }
@@ -122,6 +137,9 @@ box_t box_rotate(box_t b, float angle){
 	b.axis0 = vec_rotate(b.axis0,angle);
 	b.axis1 = vec_rotate(b.axis1,angle);
 	return b;
+}
+box_t box_direct(box_t b, vec_t direction){
+	return box_rotate(b, vec_angle(direction) - vec_angle(b.axis0) );
 }
 vec_t box_intersect_vector(box_t a, box_t b){
 	vec_t d = vec_diff(a.pos, b.pos);
