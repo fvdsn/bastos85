@@ -107,7 +107,7 @@ float vec_angle(vec_t a){
 			return 0.0;
 		}
 	}else{
-		angle = atanf(a.y/a.x);
+		angle = atan2f(a.y,a.x);
 		return angle*180.0/3.141592;
 	}
 }
