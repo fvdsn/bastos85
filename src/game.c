@@ -127,7 +127,7 @@ int main(int argc, char**argv){
 	p = particle_new(box_new(vec_new(0,0),24,32),9);
 	p->draw = particle_draw_square;
 	p->action = trail_action;
-	p->param[0] = 500;
+	p->param[0] = 100;
 	particle_set_color(p,1,0.1,0,0.1);
 	particle_set_alt_color(p,1,0,0,0.2);
 	factory_register(p,P_SHIP_TRAIL);
