@@ -22,11 +22,33 @@ typedef struct vprop_s{
 vprop_t vprop_new(vec_t val);
 /**
  * Return the current value of the vprop
+ * @param vp : a vector property.
  * @return : the current value of the vprop
  */
 vec_t   vprop_get(vprop_t vp);
+/**
+ * Sets the target of the vprop (property will be animated
+ * until it reach that value )
+ * @param vp : a vector property
+ * @param v : a vector
+ * @return a new vprop with same content as vp but with v as target
+ */
 vprop_t vprop_set(vprop_t vp, vec_t v);
+/**
+ * Sets the animation speed of a vector propery.
+ * @param vp : the vprop
+ * @param s : the speed (in unit/sec) of animation
+ * @return a new prop with same content as vp but with the new
+ * animation speed. If speed is 0 : it will not be animated.
+ */
 vprop_t vprop_set_speed(vprop_t vp, float s);
+/**
+ * Animates a vector property.
+ * @param vp : the vprop to animate
+ * @param sec_dt : the animation duration in sec.
+ * @return a new vprop with the value of vp after sec_dt
+ * of animation.
+ */
 vprop_t vprop_animate(vprop_t vp, float sec_dt);
 
 typedef struct nprop_s{
