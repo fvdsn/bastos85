@@ -146,6 +146,7 @@ box_t box_new(vec_t pos, float width, float height);
  */
 box_t box_rotate(box_t b, float angle);
 box_t box_direct(box_t b, vec_t direction);
+box_t box_bounds(box_t b);
 /**
  * Creates a new vector at the upper left corner of the box.
  * @param a : the box

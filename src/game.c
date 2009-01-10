@@ -12,6 +12,7 @@
 #define P_WALL 2
 #define P_BG   3
 #define P_MISSILE 4
+#define P_SHIP_TRAIL 5
 
 /**called every frame on the player ship*/
 static void action(particle_t*p){
@@ -21,6 +22,7 @@ static void action(particle_t*p){
 #define SHIP_VSPEED 0
 #define SHIP_HSPEED 1
 	particle_t * missile = NULL;
+	particle_t * trail = NULL;
 	vec_t spread = vec_new(random()%100 - 50,random()%100 -50);
 	
 	nprop_t vspeed = particle_get_nprop(p,SHIP_VSPEED);
@@ -48,6 +50,8 @@ static void action(particle_t*p){
 	if(vec_len(p->v) > 10.0){
 		p->box = box_direct(p->box,p->v);
 		p->vector[MISSILE] = p->v;
+		trail =  factory_create_v(p->box.pos,P_SHIP_TRAIL);
+		trail->box = p->box;
 	}
 	if(key_pressed(' ') && get_time() > p->time[MISSILE]){
 		p->time[MISSILE] = get_time() + 1;
@@ -59,6 +63,16 @@ static void action(particle_t*p){
 	if(key_pressed('r')){
 		p->box = box_rotate(p->box,1);
 	}
+}
+static void trail_action(particle_t *p){
+	p->color[3] *= 0.95;
+	p->altcolor[3] *= 0.9;
+	p->param[0] = p->param[0] -1;
+	p->box = box_rotate(p->box,random()%11 - 5);
+	if(p->param[0] < 0 ){
+		p->life = -1;
+	}
+	return;
 }
 /**called when a missile dies, creates a new one in a random direction */
 static void missile_die(particle_t*p){
@@ -106,7 +120,18 @@ int main(int argc, char**argv){
 	particle_set_nprop(p,SHIP_HSPEED,nprop_new(0,SHIP_ACCEL));
 	particle_set_nprop(p,SHIP_VSPEED,nprop_new(0,SHIP_ACCEL));
 	factory_register(p,P_SHIP);
-	
+
+	/*------------------------------------------*\
+	 * Ship trail
+	\*------------------------------------------*/
+	p = particle_new(box_new(vec_new(0,0),24,32),9);
+	p->draw = particle_draw_square;
+	p->action = trail_action;
+	p->param[0] = 500;
+	particle_set_color(p,1,0.1,0,0.1);
+	particle_set_alt_color(p,1,0,0,0.2);
+	factory_register(p,P_SHIP_TRAIL);
+
 	/*------------------------------------------*\
 	 * SOLID WALLS
 	\*------------------------------------------*/
