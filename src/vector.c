@@ -130,6 +130,14 @@ box_t box_rotate(box_t b, float angle){
 	b.axis1 = vec_rotate(b.axis1,angle);
 	return b;
 }
+box_t box_scale(box_t b, float factor){
+	b.size = vec_abs(vec_scale(b.size,factor));
+	return b;
+}
+box_t box_offset(box_t b, float offset){
+	b.size = vec_abs(vec_add(b.size,vec_new(offset,offset)));
+	return b;
+}
 box_t box_direct(box_t b, vec_t direction){
 	return box_rotate(b, vec_angle(direction) - vec_angle(b.axis0) );
 }

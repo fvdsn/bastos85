@@ -61,6 +61,7 @@ typedef struct nprop_s{
 nprop_t nprop_new(float val,float speed);
 float   nprop_get(nprop_t np);
 nprop_t nprop_set(nprop_t np, float val);
+nprop_t nprop_set_hard(nprop_t np, float val);
 nprop_t nprop_set_speed(nprop_t np, float s);
 nprop_t nprop_set_max(nprop_t np,float max);
 nprop_t nprop_animate(nprop_t np, float dt);

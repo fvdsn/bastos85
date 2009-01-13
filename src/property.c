@@ -69,6 +69,11 @@ nprop_t nprop_set(nprop_t np, float val){
 	return np;
 
 }
+nprop_t nprop_set_hard(nprop_t np, float val){
+	np.val = val;
+	np.target = val;
+	return np;
+}
 nprop_t nprop_set_speed(nprop_t np, float s){
 	if(s < 0){
 		s = 0;

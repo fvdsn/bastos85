@@ -145,6 +145,8 @@ box_t box_new(vec_t pos, float width, float height);
  * @param angle : in ]-360,360[ the rotating angle (ccw) in degrees.
  */
 box_t box_rotate(box_t b, float angle);
+box_t box_scale(box_t b, float factor);
+box_t box_offset(box_t b, float offset);
 box_t box_direct(box_t b, vec_t direction);
 box_t box_bounds(box_t b);
 /**

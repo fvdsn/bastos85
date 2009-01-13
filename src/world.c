@@ -192,7 +192,7 @@ void do_think(world_t *w){
 			particle_kill(p);
 		}
 		if (particle_is_camera(p)){
-			camera_set_zone(p->box.pos,0.05,0.015);
+			camera_set_zone(p->box.pos,0.05,0.04);
 		}
 		if (particle_is_dead(p) && p->die){
 			p->die(p);

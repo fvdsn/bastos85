@@ -13,6 +13,7 @@
 #define P_BG   3
 #define P_MISSILE 4
 #define P_SHIP_TRAIL 5
+#define P_SHIP_BOOST 6
 
 /**called every frame on the player ship*/
 static void action(particle_t*p){
@@ -24,36 +25,67 @@ static void action(particle_t*p){
 	particle_t * missile = NULL;
 	particle_t * trail = NULL;
 	vec_t spread = vec_new(random()%100 - 50,random()%100 -50);
+	int boost = 0;
 	
 	nprop_t vspeed = particle_get_nprop(p,SHIP_VSPEED);
 	nprop_t hspeed = particle_get_nprop(p,SHIP_HSPEED);
-
+	if(!key_pressed('y')){
 	if(key_pressed('a')){
+		if(nprop_get(hspeed) > 100 ){
+			hspeed = nprop_set_hard(hspeed,0);
+			boost = 1;
+		}
 		hspeed = nprop_set(hspeed,-SHIP_SPEED);
 	}else if(key_pressed('d')){
+		if(nprop_get(hspeed) < -100 ){
+			hspeed = nprop_set_hard(hspeed,0);
+			boost = 1;
+		}
 		hspeed = nprop_set(hspeed,SHIP_SPEED);
 	}else{
 		hspeed = nprop_set(hspeed,0);
 	}
 	if(key_pressed('w')){
+		if(nprop_get(vspeed) < -100 ){
+			vspeed = nprop_set_hard(vspeed,0);
+			boost = 1;
+		}
 		vspeed = nprop_set(vspeed,SHIP_SPEED);
 	}else if(key_pressed('s')){
+		if(nprop_get(vspeed) > 100 ){
+			vspeed = nprop_set_hard(vspeed,0);
+			boost = 1;
+		}
 		vspeed = nprop_set(vspeed,-SHIP_SPEED);
 	}else{
 		vspeed = nprop_set(vspeed,0);
 	}
+	}
+	if (key_pressed('y') && (nprop_get(vspeed) < 700 && nprop_get(vspeed) > - 700 &&
+				nprop_get(hspeed) < 700 && nprop_get(hspeed) > -700) ){
+		vspeed = nprop_set(vspeed,1.5*nprop_get(vspeed));
+		hspeed = nprop_set(hspeed,1.5*nprop_get(hspeed));
+	}
+
 	
 	particle_set_nprop(p,SHIP_VSPEED,vspeed);
 	particle_set_nprop(p,SHIP_HSPEED,hspeed);
 	p->v = vec_new(nprop_get(hspeed),nprop_get(vspeed));
-	
+	if(boost){
+		trail = factory_create_v(p->box.pos,P_SHIP_BOOST);
+		trail->box = box_direct(trail->box,p->box.axis0);
+	}
 	if(vec_len(p->v) > 10.0){
 		p->box = box_direct(p->box,p->v);
 		p->vector[MISSILE] = p->v;
 		trail =  factory_create_v(p->box.pos,P_SHIP_TRAIL);
 		trail->box = p->box;
+		if(key_pressed('y')){
+			particle_set_color(trail,1,1,1,0.3);
+			particle_set_alt_color(trail,1,1,1,0.3);
+		}
 	}
-	if(key_pressed(' ') && get_time() > p->time[MISSILE]){
+	if(key_pressed('g') && !key_pressed('y') &&  get_time() > p->time[MISSILE]){
 		p->time[MISSILE] = get_time() + 1;
 		missile = factory_create_v(p->box.pos,P_MISSILE);
 		missile->v = vec_add(p->vector[MISSILE],p->v);
@@ -64,9 +96,14 @@ static void action(particle_t*p){
 		p->box = box_rotate(p->box,1);
 	}
 }
+
 static void trail_action(particle_t *p){
-	p->color[3] *= 0.95;
+	p->color[3] *= 0.93;
+	p->color[2] *= 0.85;
+	p->color[1] *= 0.5;
 	p->altcolor[3] *= 0.9;
+	p->altcolor[2] *= 0.7;
+	p->altcolor[1] *= 0.5;
 	p->param[0] = p->param[0] -1;
 	p->box = box_rotate(p->box,random()%11 - 5);
 	if(p->param[0] < 0 ){
@@ -74,6 +111,19 @@ static void trail_action(particle_t *p){
 	}
 	return;
 }
+static void boost_action(particle_t *p){
+	p->color[3] *= 0.93;
+	p->color[0] *= 0.99;
+	p->altcolor[3] *= 0.9;
+	p->altcolor[0] *= 0.95;
+	p->param[0] = p->param[0] -1;
+	p->box = box_offset(p->box,5);
+	if(p->param[0] < 0 ){
+		p->life = -1;
+	}
+	return;
+}
+	
 /**called when a missile dies, creates a new one in a random direction */
 static void missile_die(particle_t*p){
 	particle_t *missile = NULL;
@@ -97,20 +147,27 @@ static void missile_collide(particle_t *p,particle_t*s){
 		particle_set_alt_color(p,1,0,0,0.1);
 	}
 }
+static void ship_collide(particle_t *p, particle_t*s){
+	if(key_pressed('y')){
+		particle_set_nprop(p,SHIP_VSPEED,nprop_set_hard(particle_get_nprop(p,SHIP_VSPEED),-nprop_get(particle_get_nprop(p,SHIP_VSPEED))));
+		particle_set_nprop(p,SHIP_HSPEED,nprop_set_hard(particle_get_nprop(p,SHIP_HSPEED),-nprop_get(particle_get_nprop(p,SHIP_HSPEED))));
+	}
+}
 int main(int argc, char**argv){
 	world_t*w = world_new(50000);
 	particle_t *p;
 	printf("CONTROLS: WSAD : move the ship\n\tR: rotate the ship\n\tSPACEBAR: fire missiles\n\tN,M,P: control the time flow \n");
 	world_set(w);
-	background_set_color(0.05,0.05,0.05,1);
+	background_set_color(0.03,0.04,0.015,1);
 	
 	/*------------------------------------------*\
 	 * Player ship
 	\*------------------------------------------*/
-	p = particle_new(box_new(vec_new(0,0),24,32),10);
+	p = particle_new(box_new(vec_new(0,0),16,3),10);
 	p->draw = particle_draw_square;	
 	p->move = particle_simple_move;
 	p->action = action;
+	p->collide = ship_collide;
 	p->vector[MISSILE] = vec_new(100,0);
 	particle_set_color(p,1,0.3,0,0.5);
 	particle_set_alt_color(p,1,0.5,0,0.5);
@@ -131,13 +188,24 @@ int main(int argc, char**argv){
 	particle_set_color(p,1,0.1,0,0.1);
 	particle_set_alt_color(p,1,0,0,0.2);
 	factory_register(p,P_SHIP_TRAIL);
+	/*------------------------------------------*\
+	 * Ship boost effect
+	\*------------------------------------------*/
+	p = particle_new(box_new(vec_new(0,0),4,4),8);
+	p->draw = particle_draw_square;
+	p->action = boost_action;
+	p->param[0] = 100;
+	particle_set_color(p,1,0.1,0,0.1);
+	particle_set_alt_color(p,1,0,0,0.2);
+	factory_register(p,P_SHIP_BOOST);
+
 
 	/*------------------------------------------*\
 	 * SOLID WALLS
 	\*------------------------------------------*/
 	p = particle_new(box_new(vec_new(0,0),50,50),1);
-	particle_set_color(p,0.5,0.5,0.5,1);
-	particle_set_alt_color(p,0.8,0.8,0.8,1);
+	particle_set_color(p,0.24,0.2,0.14,1);
+	particle_set_alt_color(p,0.5,0.2,0.1,1);
 	p->draw = particle_draw_square;
 	particle_set_solid(p,1);
 	factory_register(p,P_WALL);
@@ -147,8 +215,8 @@ int main(int argc, char**argv){
 	\*------------------------------------------*/
 	p = particle_new(box_new(vec_new(0,0),50,50),-1);
 
-	particle_set_color(p,0.1,0.1,0.1,1);
-	particle_set_alt_color(p,0,0,0,1);
+	particle_set_color(p,0.1,0.02,0.01,1);
+	particle_set_alt_color(p,0.2,0.02,0,1);
 	p->draw = particle_draw_square;
 	factory_register(p,P_BG);
 	
