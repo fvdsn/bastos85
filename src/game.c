@@ -91,9 +91,15 @@ static void action(particle_t*p){
 		missile->v = vec_add(p->vector[MISSILE],p->v);
 		missile->v = vec_add(missile->v,spread);
 		missile->die_time = get_time() + random()%1000+1000;
+		particle_set_solid(p,0);
 	}
-	if(key_pressed('r')){
-		p->box = box_rotate(p->box,1);
+	if(!key_pressed('g')){
+		particle_set_solid(p,1);
+	}
+	if(key_pressed('r') && get_time() > p->time[MISSILE]){
+		trail = factory_create_v(p->box.pos,P_WALL);
+		trail = factory_create_v(vec_add(p->box.pos,vec_new(10,-10)),P_BG);
+		p->time[MISSILE] = get_time() + 500;
 	}
 }
 
@@ -145,6 +151,9 @@ static void missile_collide(particle_t *p,particle_t*s){
 	if(!s->move){
 		particle_set_color(p,1,0.1,0,0.1);
 		particle_set_alt_color(p,1,0,0,0.1);
+	}else{
+		particle_set_color(p,0.5,1,0,0.1);
+		particle_set_alt_color(p,0.9,1,0,0.3);
 	}
 }
 static void ship_collide(particle_t *p, particle_t*s){
@@ -173,7 +182,7 @@ int main(int argc, char**argv){
 	particle_set_alt_color(p,1,0.5,0,0.5);
 	particle_set_collides(p,1);
 	particle_set_camera(p,1);
-	particle_set_solid(p,0);
+	particle_set_solid(p,1);
 	particle_set_nprop(p,SHIP_HSPEED,nprop_new(0,SHIP_ACCEL));
 	particle_set_nprop(p,SHIP_VSPEED,nprop_new(0,SHIP_ACCEL));
 	factory_register(p,P_SHIP);
@@ -230,6 +239,8 @@ int main(int argc, char**argv){
 	p->move = particle_simple_move;
 	p->collide = missile_collide;
 	particle_set_collides(p,1);
+	p->a = vec_new(0,0);
+	particle_set_solid(p,0);
 	p->die = missile_die;
 	factory_register(p,P_MISSILE);
 
@@ -243,6 +254,13 @@ int main(int argc, char**argv){
 	p=factory_create(50,0,P_WALL);
 	p->box = box_rotate(p->box,45);
 
+	factory_create(-100,400,P_WALL);
+	factory_create(0,400,P_WALL);
+	factory_create(100,400,P_WALL);
+	factory_create(200,400,P_WALL);
+	factory_create(300,400,P_WALL);
+	factory_create(400,400,P_WALL);
+
 	factory_create(-100,-100,P_BG);
 	factory_create(-150,-150,P_BG);
 	factory_resized(-300,-150,300,-100,P_BG);
@@ -253,6 +271,10 @@ int main(int argc, char**argv){
 	p = factory_resized(-400,150,-350,-50,P_WALL);
 	particle_add_timer(p,wall_rotate,10);
 	
+	factory_resized(-1000,-1000,1000,-1100,P_WALL);
+	factory_resized(-1000,1000,1000,1100,P_WALL);
+	factory_resized(-1000,-1000,-900,1000,P_WALL);
+	factory_resized(900,-1000,1000,1000,P_WALL);
 	/*running the world*/
 
 	return world_main_loop(argc,argv,w);
