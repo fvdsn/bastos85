@@ -1,6 +1,8 @@
 #ifndef __2D_MODEL_H__
 #define __2D_MODEL_H__
 
+#define MAX_FACE_GROUP 32
+
 typedef struct material_s{
 	float color_diffuse[4];
 	float color_spec[4];
@@ -21,7 +23,7 @@ typedef struct model_s{
 	int vertex_count;
 	int group_count;
 	float *vertex;
-	face_group_t **group;
+	face_group_t *group[MAX_FACE_GROUP];
 }model_t;
 
 model_t *model_load(char *path);
