@@ -15,7 +15,7 @@ typedef struct material_s{
 typedef struct face_group_s{
 	int face_count;
 	int *face;
-	material_t *m;
+	material_t *material;
 }face_group_t;
 
 
