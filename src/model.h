@@ -6,6 +6,7 @@
 #define DRAW_FACE 1
 #define DRAW_EDGE 2
 #define DRAW_VERTEX 4
+#define DRAW_TRANSP 8
 
 typedef struct material_s{
 	float color_diffuse[4];

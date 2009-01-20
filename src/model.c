@@ -367,14 +367,17 @@ void model_draw(model_t *m, float x, float y, float z, float scale, float angle)
 		if(mat == NULL){
 			return;
 		}
-		glDisable(GL_BLEND);
-		glEnable(GL_LIGHTING);
-		glMaterialfv(GL_FRONT,GL_AMBIENT_AND_DIFFUSE,mat->color_diffuse);
-		glMaterialfv(GL_BACK,GL_AMBIENT_AND_DIFFUSE,mat->color_diffuse);
-		glMaterialfv(GL_FRONT,GL_SPECULAR,mat->color_spec);
-		glMaterialfv(GL_BACK,GL_SPECULAR,mat->color_spec);
-		glMaterialf(GL_BACK,GL_SHININESS,mat->shininess);
-		/*glMaterialfv(GL_FRONT,GL_EMISSION,mat->color_diffuse);*/
+		if(mat->drawmode & DRAW_TRANSP){
+			glDisable(GL_LIGHTING);
+			glEnable(GL_BLEND);
+		}else{
+			glDisable(GL_BLEND);
+			glEnable(GL_LIGHTING);
+			glMaterialfv(GL_FRONT,GL_EMISSION,mat->color_emit);
+			glMaterialfv(GL_FRONT,GL_AMBIENT_AND_DIFFUSE,mat->color_diffuse);
+			glMaterialfv(GL_FRONT,GL_SPECULAR,mat->color_spec);
+			glMaterialf(GL_BACK,GL_SHININESS,mat->shininess);
+		}
 		if(mat->drawmode & DRAW_FACE){
 			
 			glColor4f(	mat->color_diffuse[0],

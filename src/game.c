@@ -201,7 +201,7 @@ int main(int argc, char**argv){
 	material_set_spec(mat,0.8,0.8,0.8,1);
 	material_set_shininess(mat,50);
 	material_set_edge(mat,0,0,0,0.1);
-	material_enable(mat, DRAW_FACE | DRAW_EDGE );
+	material_enable(mat, DRAW_FACE | DRAW_EDGE);
 	model_set_material(mod,0,mat);
 
 	mat = material_new();
