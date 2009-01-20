@@ -169,7 +169,9 @@ static void ship_collide(particle_t *p, particle_t*s){
 static void ship_draw(particle_t *p){
 	float angle = vec_angle(p->box.axis0);
 	/*particle_draw_square(p);*/
+	model_draw_shadow(p->model[0],p->box.pos.x-5,p->box.pos.y-5,-50,16.0,angle - 90);
 	model_draw(p->model[0],p->box.pos.x,p->box.pos.y,0,15.0,angle - 90);
+
 	
 }
 
@@ -211,7 +213,7 @@ int main(int argc, char**argv){
 	model_set_material(mod,2,mat);
 	
 
-	p = particle_new(box_new(vec_new(0,0),40,32),10);
+	p = particle_new(box_new(vec_new(0,0),40,32),0);
 	p->draw = ship_draw;	
 	p->move = particle_simple_move;
 	p->action = action;
@@ -230,7 +232,7 @@ int main(int argc, char**argv){
 	/*------------------------------------------*\
 	 * Ship trail
 	\*------------------------------------------*/
-	p = particle_new(box_new(vec_new(0,0),24,32),9);
+	p = particle_new(box_new(vec_new(0,0),24,32),-0.5);
 	p->draw = particle_draw_square;
 	p->action = trail_action;
 	p->param[0] = 100;

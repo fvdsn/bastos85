@@ -351,6 +351,24 @@ static void draw_polygon(model_t *m, face_group_t* fg, int mode ){
 		j++;
 	}
 }
+void model_draw_shadow(model_t *m, float x, float y, float z, float scale, float angle){
+	int i = 0;
+	face_group_t *fg;
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef(x,y,z);
+	glScalef(scale,scale,0);
+	glRotatef(angle,0,0,1);
+	glDisable(GL_LIGHTING);
+	glColor4f(0,0,0,1);
+	while(i < m->group_count){
+		fg = m->group[i];
+		draw_polygon(m,fg,GL_POLYGON);
+		i++;
+	}
+	glPopMatrix();
+}
+
 void model_draw(model_t *m, float x, float y, float z, float scale, float angle){
 	int i = 0;
 	face_group_t *fg;
