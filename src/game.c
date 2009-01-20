@@ -185,13 +185,14 @@ int main(int argc, char**argv){
 	mod = model_load("data/ship.obj");
 	
 	mat = material_new();
-	material_set_diffuse(mat,1,0,0,1);
-	material_set_edge(mat,0.5,0,0,0.5);
+	material_set_diffuse(mat,1,0,0,1.0);
+	material_set_edge(mat,0.5,0,0,0.1);
 	material_enable(mat, DRAW_FACE | DRAW_EDGE );
 	model_set_material(mod,1,mat);
 
 	mat = material_new();
 	material_set_diffuse(mat,0.8,0.8,0.8,1);
+	material_set_spec(mat,0.8,0.8,0.8,1);
 	material_set_edge(mat,0,0,0,0.2);
 	material_enable(mat, DRAW_FACE | DRAW_EDGE );
 	model_set_material(mod,0,mat);

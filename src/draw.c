@@ -36,7 +36,6 @@ void draw_init(void){
 			bg_color[1],
 			bg_color[2],
 			bg_color[3]);
-	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	/*glBlendFunc(GL_SRC_ALPHA,GL_ONE); ADDITIVE BLENDING */
 	/*glShadeModel(GL_FLAT);*/
@@ -73,9 +72,15 @@ void particle_draw_square(particle_t*self){
 	vec_t h1 = vec_scale(self->box.axis1,self->box.size.y);
 	float px = self->box.pos.x;
 	float py = self->box.pos.y;
-
-	glMaterialfv(GL_FRONT,GL_SPECULAR,self->color);
-	glMaterialfv(GL_FRONT,GL_DIFFUSE,self->color);
+	if(self->color[3] >= 0.99){
+		glDisable(GL_BLEND);
+		glEnable(GL_LIGHTING);
+		glMaterialfv(GL_FRONT,GL_SPECULAR,self->color);
+		glMaterialfv(GL_FRONT,GL_DIFFUSE,self->color);
+	}else{
+		glDisable(GL_LIGHTING);
+		glEnable(GL_BLEND);
+	}
 	glColor4f(	self->color[0],
 			self->color[1],
 			self->color[2],
@@ -109,7 +114,6 @@ void particle_draw_square(particle_t*self){
 		glVertex3f(px,py,0.0);
 		glVertex3f(px+h0.x*0.5,py+h0.y*0.5,0.0);
 	glEnd();
-	glEnable(GL_LIGHTING);
 }
 void particle_draw_point(particle_t*self){
 	glColor3f(	self->color[0],

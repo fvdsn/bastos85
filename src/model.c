@@ -254,6 +254,7 @@ static void draw_polygon(model_t *m, face_group_t* fg, int mode ){
 		k = 0;
 		while(k < 4){
 			if((v=fg->face[4*j + k])!= NO_VERT){
+				glNormal3f(0,0,1);
 				x = m->vertex[3*v];
 				y = m->vertex[3*v + 1];
 				z = m->vertex[3*v + 2];
@@ -281,7 +282,18 @@ void model_draw(model_t *m, float x, float y, float z, float scale, float angle)
 		if(mat == NULL){
 			return;
 		}
+		if(mat->color_diffuse[3] >= 0.99){
+			glDisable(GL_BLEND);
+			glEnable(GL_LIGHTING);
+			glMaterialfv(GL_FRONT,GL_SPECULAR,mat->color_spec);
+			glMaterialfv(GL_FRONT,GL_EMISSION,mat->color_spec);
+			glMaterialfv(GL_FRONT,GL_AMBIENT_AND_DIFFUSE,mat->color_diffuse);
+		}else{
+			glDisable(GL_LIGHTING);
+			glEnable(GL_BLEND);
+		}
 		if(mat->drawmode & DRAW_FACE){
+			
 			glColor4f(	mat->color_diffuse[0],
 					mat->color_diffuse[1],
 					mat->color_diffuse[2],
@@ -289,6 +301,8 @@ void model_draw(model_t *m, float x, float y, float z, float scale, float angle)
 			draw_polygon(m,fg,GL_POLYGON);
 		}
 		if(mat->drawmode & DRAW_EDGE){
+			glDisable(GL_LIGHTING);
+			glEnable(GL_BLEND);
 			glColor4f(	mat->color_edge[0],
 					mat->color_edge[1],
 					mat->color_edge[2],
@@ -297,6 +311,8 @@ void model_draw(model_t *m, float x, float y, float z, float scale, float angle)
 		}
 		if(mat->drawmode & DRAW_VERTEX){
 			glPointSize(3);
+			glDisable(GL_LIGHTING);
+			glEnable(GL_BLEND);
 			glColor4f(	mat->color_edge[0],
 					mat->color_edge[1],
 					mat->color_edge[2],
