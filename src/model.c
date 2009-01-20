@@ -360,6 +360,7 @@ void model_draw_shadow(model_t *m, float x, float y, float z, float scale, float
 	glScalef(scale,scale,0);
 	glRotatef(angle,0,0,1);
 	glDisable(GL_LIGHTING);
+	glDisable(GL_BLEND);
 	glColor4f(0,0,0,1);
 	while(i < m->group_count){
 		fg = m->group[i];

@@ -76,17 +76,18 @@ static void ship_action(particle_t*p){
 		p->box = box_direct(p->box,p->v);
 		p->vector[MISSILE] = p->v;
 		trail =  factory_create_v(p->box.pos,P_SHIP_TRAIL);
-		trail->box = p->box;
+		trail->box = box_scale(p->box,0.5);
 		if(key_pressed('y')){
 			particle_set_color(trail,1,1,1,0.3);
 			particle_set_alt_color(trail,1,1,1,0.3);
 		}
 	}
 	if(key_pressed('g') && !key_pressed('y') &&  get_time() > p->time[MISSILE]){
-		p->time[MISSILE] = get_time() + 1;
+		p->time[MISSILE] = get_time() + 100;
 		missile = factory_create_v(p->box.pos,P_MISSILE);
 		missile->v = vec_add(p->vector[MISSILE],p->v);
 		missile->v = vec_add(missile->v,spread);
+		missile->box = box_direct(missile->box,missile->v);
 		missile->die_time = get_time() + random()%1000+1000;
 		particle_set_solid(p,0);
 	}
@@ -158,7 +159,9 @@ static void register_ship(void){
 	particle_set_collides(p,1);
 	particle_set_camera(p,1);
 	particle_set_solid(p,1);
-	particle_set_group(p,1);
+	particle_set_group(p,P_SHIP);
+	particle_toggle_collide_group(p,P_SHIP);
+	particle_toggle_collide_group(p,P_MISSILE);
 	particle_set_nprop(p,SHIP_HSPEED,nprop_new(0,SHIP_ACCEL));
 	particle_set_nprop(p,SHIP_VSPEED,nprop_new(0,SHIP_ACCEL));
 	factory_register(p,P_SHIP);	
@@ -217,38 +220,65 @@ static void register_ship_gfx(void){
 \*------------------------------------------*/
 
 static void missile_die(particle_t*p){
-	particle_t *missile = NULL;
-	vec_t newdir = vec_new(random()%256 - 128, random()%256 - 128);
-	missile = factory_create_v(p->box.pos,P_MISSILE);
-	missile->v = vec_add(newdir,vec_scale(p->v,0.7));;
-	missile->die_time = get_time() + random()%1000 + 250;
-	missile->box = box_rotate(missile->box,random()%360);
-	if(random()%100 <1){
-		missile->die = NULL;
-	}
+	particle_t *exp = NULL;
+	exp = factory_create_v(p->box.pos,P_SHIP_BOOST);
+	exp->box = box_direct(exp->box,p->box.axis0);
+	exp->color[3] = 0.5;
 }
 static void missile_collide(particle_t *p,particle_t*s){
-	if(!s->move){
-		particle_set_color(p,1,0.1,0,0.1);
-		particle_set_alt_color(p,1,0,0,0.1);
-	}else{
-		particle_set_color(p,0.5,1,0,0.1);
-		particle_set_alt_color(p,0.9,1,0,0.3);
-	}
+	missile_die(p);
+	p->life = 0;
+}
+static void missile_action(particle_t *p){
+	particle_t *trail;
+	trail =  factory_create_v(p->box.pos,P_SHIP_TRAIL);
+	trail->box = box_scale(p->box,0.5);
+	trail->color[1] *= 0.5;
+}
+static void missile_draw(particle_t *p){
+	float angle = vec_angle(p->box.axis0);
+	model_draw_shadow(p->model[0],p->box.pos.x-5,p->box.pos.y-5,-51,8.0,angle - 90);
+	model_draw(p->model[0],p->box.pos.x,p->box.pos.y,-10,7.0,angle - 90);
 }
 static void register_ship_missile(void){
 	particle_t *p;
+	model_t *mod;
+	material_t *mat;
 
-	p = particle_new(box_new(vec_new(0,0),10,10),2);
+	mod = model_load("data/missile.obj");
+	
+	mat = material_new();
+	material_set_diffuse(mat,1,0,0,1.0);
+	material_set_emit(mat,0.2,0.1,0,1.0);
+	material_set_spec(mat,1,0.5,0.2,1.0);
+	material_set_edge(mat,0.5,0,0,0.1);
+	material_set_shininess(mat,50);
+	material_enable(mat, DRAW_FACE | DRAW_EDGE);
+	model_set_material(mod,0,mat);
+
+	mat = material_new();
+	material_set_diffuse(mat,0.416,0.525,0.345,1);
+	material_set_spec(mat,0.025,0.149,0,1);
+	material_set_shininess(mat,50);
+	material_set_edge(mat,0,0,0,0.1);
+	material_enable(mat, DRAW_FACE | DRAW_EDGE);
+	model_set_material(mod,1,mat);
+
+	p = particle_new(box_new(vec_new(0,0),10,10),-1);
 	particle_set_color(p,0,0.5,1,0.1);
 	particle_set_alt_color(p,0.1,0.6,1,0.1);
-	p->draw = particle_draw_square;
+	p->draw = missile_draw;
 	p->move = particle_simple_move;
 	p->collide = missile_collide;
+	p->die	= missile_die;
+	p->action = missile_action;
+	particle_set_group(p,P_MISSILE);
+	particle_toggle_collide_group(p,P_SHIP);
+	particle_toggle_collide_group(p,P_MISSILE);
+	p->model[0] = mod;
 	particle_set_collides(p,1);
 	p->a = vec_new(0,0);
 	particle_set_solid(p,0);
-	p->die = missile_die;
 	factory_register(p,P_MISSILE);
 }
 
