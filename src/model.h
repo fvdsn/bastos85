@@ -12,6 +12,7 @@ typedef struct material_s{
 	float color_spec[4];
 	float color_emit[4];
 	float color_edge[4];
+	float shininess;
 	int drawmode;
 	int users;
 }material_t;
@@ -19,6 +20,7 @@ typedef struct material_s{
 typedef struct face_group_s{
 	int face_count;
 	int *face;
+	int *normal;
 	material_t *material;
 }face_group_t;
 
@@ -27,6 +29,7 @@ typedef struct model_s{
 	int vertex_count;
 	int group_count;
 	float *vertex;
+	float *normal;
 	face_group_t *group[MAX_FACE_GROUP];
 }model_t;
 
@@ -39,6 +42,7 @@ void	material_set_diffuse(material_t *mat,float r,float g, float b, float a);
 void	material_set_spec(material_t *mat,float r,float g, float b, float a);
 void	material_set_emit(material_t *mat,float r,float g, float b, float a);
 void	material_set_edge(material_t *mat,float r,float g, float b, float a);
+void	material_set_shininess(material_t *mat, float s);
 void	material_enable(material_t *mat, int drawmode);
 void	material_disable(material_t *mat, int drawmode);
 

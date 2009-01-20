@@ -13,7 +13,7 @@ float bg_color[4] = {0,0,0,1};
 static void draw_init_lights(void){
 	float mat_specular[] = {1.0,1.0,1.0,1.0};
 	float mat_shining[] = {50.0};
-	float light_position[] = {10.0,10.0,10.0,0.0};
+	float light_position[] = {5,5,10.0,0.0};
 	float light_color[] = {1.0,1.0,1.0,1.0};
 	float light_ambiant[] = {0.1,0.1,0.1,1.0};
 	glMaterialfv(GL_FRONT,GL_SPECULAR,mat_specular);
@@ -72,15 +72,8 @@ void particle_draw_square(particle_t*self){
 	vec_t h1 = vec_scale(self->box.axis1,self->box.size.y);
 	float px = self->box.pos.x;
 	float py = self->box.pos.y;
-	if(self->color[3] >= 0.99){
-		glDisable(GL_BLEND);
-		glEnable(GL_LIGHTING);
-		glMaterialfv(GL_FRONT,GL_SPECULAR,self->color);
-		glMaterialfv(GL_FRONT,GL_DIFFUSE,self->color);
-	}else{
-		glDisable(GL_LIGHTING);
-		glEnable(GL_BLEND);
-	}
+	glDisable(GL_LIGHTING);
+	glEnable(GL_BLEND);
 	glColor4f(	self->color[0],
 			self->color[1],
 			self->color[2],

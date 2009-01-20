@@ -102,6 +102,9 @@ static void action(particle_t*p){
 		trail = factory_create_v(vec_add(p->box.pos,vec_new(10,-10)),P_BG);
 		p->time[MISSILE] = get_time() + 500;
 	}
+	if(key_pressed('f')){
+		p->box = box_rotate(p->box,1);
+	}
 }
 
 static void trail_action(particle_t *p){
@@ -183,23 +186,27 @@ int main(int argc, char**argv){
 	 * Player ship
 	\*------------------------------------------*/
 	mod = model_load("data/ship.obj");
+	model_print(mod);
 	
 	mat = material_new();
 	material_set_diffuse(mat,1,0,0,1.0);
+	material_set_spec(mat,1,0.5,0.2,1.0);
 	material_set_edge(mat,0.5,0,0,0.1);
-	material_enable(mat, DRAW_FACE | DRAW_EDGE );
+	material_set_shininess(mat,50);
+	material_enable(mat, DRAW_FACE | DRAW_EDGE);
 	model_set_material(mod,1,mat);
 
 	mat = material_new();
 	material_set_diffuse(mat,0.8,0.8,0.8,1);
 	material_set_spec(mat,0.8,0.8,0.8,1);
-	material_set_edge(mat,0,0,0,0.2);
+	material_set_shininess(mat,50);
+	material_set_edge(mat,0,0,0,0.1);
 	material_enable(mat, DRAW_FACE | DRAW_EDGE );
 	model_set_material(mod,0,mat);
 
 	mat = material_new();
 	material_set_diffuse(mat,0,0,0,1);
-	material_set_edge(mat,0.2,0.2,0.2,0.1);
+	material_set_edge(mat,1,1,1,0.1);
 	material_enable(mat, DRAW_FACE | DRAW_EDGE );
 	model_set_material(mod,2,mat);
 	
