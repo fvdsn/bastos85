@@ -4,6 +4,7 @@
 #include "virtual_time.h"
 #include "vector.h"
 #include "property.h"
+#include "model.h"
 
 #define PARTICLE_PARAM_COUNT 4
 
@@ -37,6 +38,7 @@ struct particle_s{
 	int 	camera;		/*1 if the camera follows this particle*/
 	float 	color[4];		
 	float 	altcolor[4];
+	model_t *model[PARTICLE_PARAM_COUNT];
 	
 	/*PARAMS*/
 	int 	 flags;	

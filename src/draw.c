@@ -11,7 +11,7 @@ int win_w, win_h;
 
 float bg_color[4] = {0,0,0,1};
 void draw_init(void){
-	glDisable(GL_DEPTH_TEST);
+	/*glDisable(GL_DEPTH_TEST);*/
 	glClearColor(	bg_color[0],
 			bg_color[1],
 			bg_color[2],
@@ -32,7 +32,7 @@ static void draw_redraw(void){
 			win_w/2.0  +cam_pos.x, 
 			-win_h/2.0 +cam_pos.y, 
 			win_h/2.0  +cam_pos.y,
-			-1,1);
+			-100,100);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }

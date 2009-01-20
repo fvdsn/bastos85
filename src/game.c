@@ -16,6 +16,7 @@
 #define P_SHIP_BOOST 6
 
 /**called every frame on the player ship*/
+
 static void action(particle_t*p){
 #define MISSILE 0
 #define SHIP_SPEED 350
@@ -162,9 +163,18 @@ static void ship_collide(particle_t *p, particle_t*s){
 		particle_set_nprop(p,SHIP_HSPEED,nprop_set_hard(particle_get_nprop(p,SHIP_HSPEED),-nprop_get(particle_get_nprop(p,SHIP_HSPEED))));
 	}
 }
+static void ship_draw(particle_t *p){
+	float angle = vec_angle(p->box.axis0);
+	/*particle_draw_square(p);*/
+	model_draw(p->model[0],p->box.pos.x,p->box.pos.y,0,15.0,angle - 90);
+	
+}
+
 int main(int argc, char**argv){
 	world_t*w = world_new(50000);
 	particle_t *p;
+	model_t *mod;
+	material_t *mat;
 	printf("CONTROLS: WSAD : move the ship\n\tR: rotate the ship\n\tSPACEBAR: fire missiles\n\tN,M,P: control the time flow \n");
 	world_set(w);
 	background_set_color(0.03,0.04,0.015,1);
@@ -172,13 +182,35 @@ int main(int argc, char**argv){
 	/*------------------------------------------*\
 	 * Player ship
 	\*------------------------------------------*/
-	p = particle_new(box_new(vec_new(0,0),16,3),10);
-	p->draw = particle_draw_square;	
+	mod = model_load("data/ship.obj");
+	
+	mat = material_new();
+	material_set_diffuse(mat,1,0,0,1);
+	material_set_edge(mat,0.5,0,0,0.5);
+	material_enable(mat, DRAW_FACE | DRAW_EDGE );
+	model_set_material(mod,1,mat);
+
+	mat = material_new();
+	material_set_diffuse(mat,0.8,0.8,0.8,1);
+	material_set_edge(mat,0,0,0,0.2);
+	material_enable(mat, DRAW_FACE | DRAW_EDGE );
+	model_set_material(mod,0,mat);
+
+	mat = material_new();
+	material_set_diffuse(mat,0,0,0,1);
+	material_set_edge(mat,0.2,0.2,0.2,0.1);
+	material_enable(mat, DRAW_FACE | DRAW_EDGE );
+	model_set_material(mod,2,mat);
+	
+
+	p = particle_new(box_new(vec_new(0,0),40,32),10);
+	p->draw = ship_draw;	
 	p->move = particle_simple_move;
 	p->action = action;
 	p->collide = ship_collide;
 	p->vector[MISSILE] = vec_new(100,0);
-	particle_set_color(p,1,0.3,0,0.5);
+	p->model[0] = mod;
+	particle_set_color(p,1,0.3,0,0.1);
 	particle_set_alt_color(p,1,0.5,0,0.5);
 	particle_set_collides(p,1);
 	particle_set_camera(p,1);
