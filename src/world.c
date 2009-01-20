@@ -137,7 +137,9 @@ void do_physics(world_t *w){
 		p->move(p);
 		if(particle_collides(p)){
 			while((q = world_next_solid(w,b,&j))){
-				if(q != p && !vec_zero(d = box_oriented_collision(p->box,q->box)) ){
+				if(	   q != p 
+					&& particle_collide_with(q,p) 
+					&& !vec_zero(d = box_oriented_collision(p->box,q->box)) ){
 					/*printf("collide\n");*/
 					/*d = box_oriented_collision(p->box,q->box);*/
 					if(d.x != 0.0){

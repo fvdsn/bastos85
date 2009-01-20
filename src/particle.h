@@ -17,6 +17,9 @@ struct ptimer_s{
 	void (*timer)(particle_t *self);
 };
 
+#define PHYS_SOLID 1
+#define PHYS_COLLIDE 2
+
 struct particle_s{
 	/* PHYSICS */
 	box_t 	box;		/*position and size*/
@@ -26,10 +29,13 @@ struct particle_s{
 	float	mass;		
 	vec_t 	air_friction;	
 	vec_t 	ground_friction;
-	int 	solid;		/*1 if the recieves collisions*/
-	int 	collides;		/*1 if the particles makes collisions*/
-	
+	int 	physflag;		/*solid, collides, etc...*/
+	int	group;			/*in [0, 31]*/
+	int	collide_group;		/*particle collide only 
+					  with particles with matching collide
+					  group*/
 	/* LOGIC */
+	int	team;
 	int 	life;		/*dead if <= 0 */
 	vmsec_t die_time;
 	struct particle_s *parent;
@@ -109,6 +115,10 @@ void particle_set_collides(particle_t*p, int trueorfalse);
  * @return : 1 if the particle collides 0 if it doesn't
  */
 int particle_collides(particle_t*p);
+int particle_collide_with(particle_t *a, particle_t *b);
+void particle_set_group(particle_t*p,int group);
+void particle_toggle_collide_all(particle_t*p);
+void particle_toggle_collide_group(particle_t*p, int group);
 /**
  * Makes the camera follow this particle
  * @param p : the followed particle

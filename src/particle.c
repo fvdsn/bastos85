@@ -11,6 +11,7 @@ particle_t *particle_new(box_t box, float z){
 	p->box = box;
 	p->z = z;
 	p->life = 1;
+	p->collide_group = ~0;
 	return p;
 }
 void particle_free(particle_t*p){
@@ -23,16 +24,36 @@ void particle_kill(particle_t*p){
 	p->life = -1;
 }
 void particle_set_solid(particle_t*p, int trueorfalse){
-	p->solid = trueorfalse;
+	if(trueorfalse){
+		p->physflag |= PHYS_SOLID;
+	}else{
+		p->physflag &= ~PHYS_SOLID;
+	}
 }
 int particle_is_solid(particle_t*p){
-	return p->solid;
+	return p->physflag & PHYS_SOLID;
 }
 void particle_set_collides(particle_t*p, int trueorfalse){
-	p->collides = trueorfalse;
+	if(trueorfalse){
+		p->physflag |= PHYS_COLLIDE;
+	}else{
+		p->physflag &= ~PHYS_COLLIDE;
+	}
 }
 int particle_collides(particle_t*p){
-	return p->collides;
+	return p->physflag & PHYS_COLLIDE;
+}
+int particle_collide_with(particle_t *a, particle_t *b){
+	return (1 << b->group) & a->collide_group;
+}
+void particle_set_group(particle_t*p,int group){
+	p->group = group;
+}
+void particle_toggle_collide_all(particle_t*p){
+	p->collide_group ^= ~0;
+}
+void particle_toggle_collide_group(particle_t*p, int group){
+	p->collide_group ^= ( 1 << group );
 }
 void particle_set_flag(particle_t*p, int id, int trueorfalse){
 	int flag = 1 << id;

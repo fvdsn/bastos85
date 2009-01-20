@@ -36,8 +36,8 @@ void draw_init(void){
 			bg_color[1],
 			bg_color[2],
 			bg_color[3]);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-	/*glBlendFunc(GL_SRC_ALPHA,GL_ONE); ADDITIVE BLENDING */
+	/*glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);*/
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE); /*ADDITIVE BLENDING */
 	/*glShadeModel(GL_FLAT);*/
 	/*glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

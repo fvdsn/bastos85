@@ -225,6 +225,7 @@ int main(int argc, char**argv){
 	particle_set_collides(p,1);
 	particle_set_camera(p,1);
 	particle_set_solid(p,1);
+	particle_set_group(p,1);
 	particle_set_nprop(p,SHIP_HSPEED,nprop_new(0,SHIP_ACCEL));
 	particle_set_nprop(p,SHIP_VSPEED,nprop_new(0,SHIP_ACCEL));
 	factory_register(p,P_SHIP);
