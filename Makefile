@@ -5,10 +5,13 @@ LIBS = -lglut
 all : Makefile game
 
 game: game.o
-	${CC} ${FLAGS} ${LIBS} -o game world.o particle.o draw.o vector.o virtual_time.o keyboard.o factory.o game.o property.o model.o
+	${CC} ${FLAGS} ${LIBS} -o game world.o particle.o draw.o vector.o virtual_time.o keyboard.o factory.o game.o property.o model.o g_ship.o
 
-game.o:	src/game.c world.o particle.o vector.o draw.o factory.o	property.o model.o
+game.o:	src/game.c src/game.h world.o particle.o vector.o draw.o factory.o property.o model.o g_ship.o
 	${CC} ${FLAGS} -c src/game.c
+
+g_ship.o: src/g_ship.c src/game.h world.o particle.o vector.o draw.o factory.o property.o model.o
+	${CC} ${FLAGS} -c src/g_ship.c
 
 factory.o: src/factory.c src/factory.h particle.o vector.o world.o
 	${CC} ${FLAGS} -c src/factory.c
