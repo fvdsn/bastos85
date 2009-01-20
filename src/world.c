@@ -250,7 +250,8 @@ int world_main_loop(int argc, char **argv, world_t *w){
 	world_set(w);
 	/*printf("coucou2\n");	*/
 	glutInit(&argc,argv);
-	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB);
+	glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGB);
+	glEnable(GL_DEPTH_TEST);
 	glutInitWindowPosition(250,250);
 	glutInitWindowSize(600,400);
 	glutCreateWindow("BASTOS 85");
