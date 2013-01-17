@@ -1,11 +1,11 @@
 CC = gcc
 FLAGS = -g -O3 -Wall -Werror -Wextra -pedantic -Wno-unused-parameter -g -Wdeclaration-after-statement -Wmissing-declarations -Wpointer-arith -Wstrict-prototypes -Wredundant-decls -Wcast-align -Wwrite-strings -Winline -Wformat-security -Wformat-nonliteral -Wswitch-enum -Wswitch-default -Winit-self
-LIBS = -lglut
+LIBS = -lGL -lGLU -lglut -lm
 
 all : Makefile game
 
 game: game.o
-	${CC} ${FLAGS} ${LIBS} -o game world.o particle.o draw.o vector.o virtual_time.o keyboard.o factory.o game.o property.o model.o g_ship.o
+	${CC} ${FLAGS} -o game world.o particle.o draw.o vector.o virtual_time.o keyboard.o factory.o game.o property.o model.o g_ship.o ${LIBS}
 
 game.o:	src/game.c src/game.h world.o particle.o vector.o draw.o factory.o property.o model.o g_ship.o
 	${CC} ${FLAGS} -c src/game.c

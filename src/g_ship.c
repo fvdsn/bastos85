@@ -82,7 +82,7 @@ static void ship_action(particle_t*p){
 			particle_set_alt_color(trail,1,1,1,0.3);
 		}
 	}
-	if(key_pressed('g') && !key_pressed('y') &&  get_time() > p->time[MISSILE]){
+	if(key_pressed(' ') && !key_pressed('y') &&  get_time() > p->time[MISSILE]){
 		p->time[MISSILE] = get_time() + 100;
 		missile = factory_create_v(p->box.pos,P_MISSILE);
 		missile->v = vec_add(p->vector[MISSILE],p->v);
